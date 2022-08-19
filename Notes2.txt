@@ -1,0 +1,2046 @@
+D:\PraiseTheLord\HSBGInfotech\DevOps\sre\Notes.txt
+
+################################################################################################
+Cloud Engineering / Infrastructure as Code
+################################################################################################
+Infrastructure Coding - Terraform
+
+
+################################################################################################
+Services mesh Data planes & Control Planes - Envoy & Istio
+
+Envoy
+-----
+https://www.xenonstack.com/insights/what-is-envoyproxy
+https://www.envoyproxy.io/
+	Envoy Proxy 
+		modern, 
+		high performant, 
+		edge proxy, 
+		
+		works at both 
+			L4 and 
+			L7 proxies 
+		most suitable for modern Cloud-Native applications 
+			need proxy layer at L7. 
+			
+		Envoy is most comparable to software load balancers 
+			like NGINX and HAProxy, 
+		Has many advantages than typical proxies. 
+		Allows SSL by default
+		Really flexible around discovery and load balancing the workload.
+
+
+
+	Why Envoy Proxy Matters?
+	------------------------
+		NGINX, HAProxy, and Envoy are all battle-tested L4 and L7 proxies
+			
+	Envoy has the following additional benefits -
+		It’s developed by keeping modern Microservices in mind.
+		It translates between HTTP-2 and HTTP-1.1.
+		It proxies any TCP protocol.
+		It proxies any raw data, web sockets, databases, etc.
+		It enables SSL by default.
+		It has in-built Service Discovery as well as Load Balancing.
+		It does all the configuration dynamically
+			hosts added dynamically, 
+			not like writing the list to a static config file & re-reading it.
+		Envoy stores the mapping of requests from clients (i.e., URLs) to services 
+			in-built load balancer reads dynamically.	
+
+
+		How Envoy works?
+		----------------
+		Configuring Envoy is a little complex 
+		Envoy keeps 
+			simple things very simple 
+			allowing complex things to be possible to implement.
+
+		Envoy Architecture
+		-----------------
+		Downstream/Upstream
+		Clusters
+			Backend-Downstream
+		Listeners
+			Frontend-Upstream
+		Network Filters
+			connect Listeners to Clusters
+			options like
+				tcp proxy
+				network proxy
+				http proxy etc.
+		Thread Model
+			Doesn't use process model
+			Light weight 
+			Much better performance
+		Connection Pools
+
+
+Envoy 
+	L7 (application layer) proxy 
+	communication bus designed for large modern service oriented architectures. 
+	The project was born out of the belief that:
+		Network should be transparent to applications. 
+		When network and application problems do occur 
+			quick and easy determine source.
+		In practice, this goal is incredibly difficult. 
+	Envoy attempts to solve this using:
+
+		Out of process architecture: 
+			Envoy is a self contained process 
+			designed to run alongside every application server. 
+			All of the Envoys 
+				form a transparent communication mesh 
+				each application sends and receives messages to and from localhost 
+				unaware of the network topology. 
+			out of process architecture 
+				two substantial benefits 
+					over the traditional library approach 
+					to service to service communication:
+
+			Envoy works with any application language. 
+			A single Envoy deployment can form a mesh between 
+				Java, 
+				C++, 
+				Go, 
+				PHP, 
+				Python, 
+				etc. 
+			Microservices can be polyglot.
+			Envoy transparently bridges the gap.
+
+			deploying library upgrades can be incredibly painful. 
+			Envoy can be 
+				deployed and 
+				upgraded 
+				quickly across an entire infrastructure transparently.
+
+		L3/L4 filter architecture: 
+			At its core, Envoy is an L3/L4 network proxy. 
+			A pluggable filter chain mechanism 
+				allows filters to be 
+					written to perform different TCP/UDP proxy tasks and 
+				inserted into the main server. 
+			Filters have already been written 
+				to support various tasks such as 
+					raw TCP proxy, 
+					UDP proxy, 
+					HTTP proxy, 
+					TLS client certificate authentication, 
+					Redis, 
+					MongoDB, 
+					Postgres, 
+					etc.
+
+		HTTP L7 filter architecture: 
+			HTTP 
+				critical component of modern application 
+			Envoy supports an additional HTTP L7 filter layer. 
+			HTTP filters can be plugged into the HTTP connection management subsystem 
+				that perform different tasks such as 
+					buffering, 
+					rate limiting, 
+					routing/forwarding, 
+					sniffing Amazon’s DynamoDB, etc.
+
+			First class HTTP/2 support: 
+				Envoy supports both 
+					HTTP/1.1 and 
+					HTTP/2. 
+				Envoy can operate as a transparent HTTP/1.1 to HTTP/2 proxy in both directions. 
+				Any combination of HTTP/1.1 and HTTP/2 clients and 
+					target servers can be bridged. 
+				The recommended service to service configuration 
+					uses HTTP/2 between all Envoys 
+					to create a mesh of persistent connections that 
+					requests and responses can be multiplexed over.
+
+			HTTP/3 support (currently in alpha): 
+				From 1.19.0, 
+					Envoy supports HTTP/3 upstream and downstream, 
+					translating between any combination of HTTP/1.1, HTTP/2 and HTTP/3 in either direction.
+
+			HTTP L7 routing: 
+				Envoy supports a routing subsystem 
+				capable of routing and redirecting requests based on 
+					path, 
+					authority, 
+					content type, 
+					runtime values, etc. 
+				This functionality is most useful 
+					when using Envoy as a front/edge proxy 
+					but is also leveraged when building a service to service mesh.
+
+		gRPC support: 
+			gRPC 
+				RPC framework from Google 
+				uses HTTP/2 or above as the underlying multiplexed transport. 
+			Envoy supports all of the HTTP/2 features 
+				required to be used as the 
+					routing and 
+					load balancing substrate for 
+						gRPC requests and responses. 
+				The two systems are very complementary.
+
+		Service discovery and dynamic configuration: 
+			Envoy optionally consumes 
+				layered set of dynamic configuration APIs for centralized management. 
+			The layers provide an Envoy with dynamic updates about: 
+				hosts within a backend cluster, 
+				backend clusters themselves, 
+				HTTP routing, 
+				listening sockets, and 
+				cryptographic material. 
+			For a simpler deployment, 
+				backend host discovery can be done through DNS resolution 
+					(or even skipped entirely), 
+					with the further layers replaced by static config files.
+
+		Health checking: 
+			The recommended way of building an Envoy mesh is to 
+				treat service discovery as an eventually consistent process. 
+			Envoy includes a health checking subsystem 
+				which can optionally perform active health checking 
+					of upstream service clusters. 
+			Envoy uses 
+				union of 
+					service discovery and health checking 
+						determine healthy load balancing targets. 
+			
+		Advanced load balancing: 
+			Load balancing among different components in a 
+				distributed system is a complex problem. 
+			Envoy is also a self contained proxy 
+				not a library, 
+			implement advanced load balancing techniques 
+				in a single place and 
+				accessible to any application. 
+			Currently Envoy includes support for 
+				automatic retries, 
+				circuit breaking, 
+				global rate limiting 
+					via an external rate limiting service, 
+				request shadowing, and 
+				outlier detection. 
+			Work on request racing is WIP.
+
+		Front/edge proxy support: 
+			There is substantial benefit in using the same software at the edge 
+				(observability, 
+				management, 
+				identical service discovery and 
+				load balancing algorithms, etc.). 
+		Envoy well suited as 
+			edge proxy 
+			for most modern web application use cases. 
+		This includes 
+			TLS termination, 
+			HTTP/1.1 HTTP/2 and HTTP/3 support
+			HTTP L7 routing.
+
+		Best in class observability: 
+			Primary goal of Envoy 
+				make the network transparent. 
+			But problems occur both at 
+				network level and 
+				application level. 
+		Envoy includes robust statistics support for all subsystems. 
+			statsd (and compatible providers) 
+				currently supported statistics sink
+				though plugging in a different one would not be difficult. 
+		Statistics are also viewable via the administration port. 
+		Envoy also supports distributed tracing via thirdparty providers.
+
+			
+		Downstream vs Upstream
+		-----------------------
+		Downstream - anything in front of envoy
+		Upstream - anything in back of envoy
+		
+		Downstream <--> envoy <--> upstream
+		image
+		
+		Service Mesh/Side car
+		Downstream <--> envoy (http1) <--> envoy (http2)<--> upstream
+		
+		Clusters
+		--------
+		image
+		Group of hosts/endpoints called cluster
+		Cluster has a loadbalancing policy
+		
+		
+		Listeners
+		---------
+		Listen on a port for downstream clients
+		Network filters are applied to Listeners
+			- TCP/HTTP filters
+			- Transport sockets TLS
+			
+		Network Filters
+		---------------
+			Maps Listeners and Clusters
+			Build to be extensible
+				we can add our own proxy tomorrow
+			TCP Proxy network filters
+				envoy.filters.network.tcp_proxy
+			HTTP Proxy network filters
+				envoy.filters.network.http_connection_manager
+			MongoDB/MySQL/GRPC Network filter
+			
+
+		Network Stack
+		-------------
+		Envoy works at the TCP level: 
+			Layer 3/4 Network/Transport proxy. 
+			It just read/write bits
+				uses IP addresses and port numbers to make a decision 
+					about where to route the request. 
+		Working at the TCP level is drastically fast and simple. 
+		Envoy also works at L7 as well simultaneously 
+			to proxy different URLs (path based routing?) to different backends 
+			since it needs application information available only at L7. 
+		Working at 3, 4, and 7 layers allow it to 
+			cover up all limitations and 
+			have good performance.
+		2 layers of Envoy
+		Edge Envoy: 
+			The standalone instance is a single point of ingress to the cluster. 
+			All requests from outside first come here & it sends them to internal Envoys. 
+
+		Sidecar Envoy: 
+			This instance (replica) of an app has a sidecar Envoy, 
+				runs in parallel with the app. 
+				These Envoys monitors everything about the application.
+
+		All these proxies are inside a mesh
+			has internal routing 
+			Each, side Envoys does health monitoring 
+				identify services which go down. 
+		All Envoys also gather stats from the application
+			sends it to a telemetry component (Mixer in Istio). 
+		All of the Envoys in Mesh configured differently by modifying Envoy configuration file, 
+		according to a particular use case.
+
+
+		Advantages of Envoy Proxy
+		-------------------------
+		Performance (much better than nginx).
+		Scales horizontally.
+		Proxies added/removed dynamically.
+		Filter the request based on many parameters.
+		For 
+			Edge Envoys, 
+				any number of servers
+					(each of which points to its own array of hosts) 
+				any number of routes added for different proxy URLs
+					gives flexibility in Infra management.
+			For sidecars
+				Envoy have only one route
+				it will proxy to the app running on localhost.
+		Configuring a sidecar proxy is pretty straight-forward
+			configuration updated dynamically.
+		Envoy allows DNS
+			easier to remember 
+			new service instances added to the DNS dynamically.
+		Envoy manages, observes and works best at L7.
+		Envoy aligns well with Microservices world.
+		Provides features such as 
+			resilience, 
+			observability, and 
+			load balancing.
+		Envoy embraces distributed architectures 
+		Used in production at 
+			Lyft, 
+			Apple, 
+			Google.
+
+			Dropbox moved from nginx to Envoy
+			
+		
+		
+Steps
+1. Install envoy 
+		https://www.envoyproxy.io/docs/envoy/latest/start/install
+
+		To run envoy as a docker container
+			https://www.envoyproxy.io/docs/envoy/latest/start/docker
+			
+2. 
+	http.yaml
+
+
+
+docker run -d -p 1111:80 --name aspnetcore1111 mcr.microsoft.com/dotnet/samples:aspnetapp
+docker run -d -p 2222:80 --name aspnetcore2222 mcr.microsoft.com/dotnet/samples:aspnetapp
+docker run -d -p 3333:80 --name aspnetcore3333 mcr.microsoft.com/dotnet/samples:aspnetapp
+docker run -d -p 4444:80 --name aspnetcore4444 mcr.microsoft.com/dotnet/samples:aspnetapp
+
+
+
+Install 
+https://computingforgeeks.com/how-to-install-envoy-proxy-on-centos/
+  sudo yum install -y yum-utils
+  yum update -y
+  sudo rpm --import 'https://rpm.dl.getenvoy.io/public/gpg.CF716AF503183491.key'
+  curl -sL 'https://rpm.dl.getenvoy.io/public/config.rpm.txt?distro=el&codename=7' > /tmp/tetrate-getenvoy-rpm-stable.repo
+  sudo yum-config-manager --add-repo '/tmp/tetrate-getenvoy-rpm-stable.repo'
+  sudo yum install -y getenvoy-envoy
+  envoy --version
+
+https://github.com/hnasr/javascript_playground/blob/master/envoy/allbackend.yaml
+vi http.yaml - copy the content from above file.
+envoy --config-path http.yaml
+N.B: It doesn't accept .yml extension. It should be .yaml only.
+http://192.168.56.2:8080/
+
+
+Service Mesh
+------------
+Handle the below infrastructure challenges
+	Service Discovery
+	Load Balancing
+	Fault Tolerance
+	Distributed Tracing 
+	Telemetrics
+	Security
+	Mutual TLS between Services
+	Network policies/Whitelisting
+	Certificate expiry
+	Granularity
+	Bounded Contexts
+	Data Modelling
+	Independently releasable
+	Service contracts
+	Smart services, dumb-pipes
+
+
+Istio can support
+-----------------
+Service Discovery
+Load Balancing 
+	(extensive set of algorithems)
+Multi protocol support 
+	(HTTP2/gRPC)
+Fault Tolerance 
+	(Circuirt breaking, Rate limiting, Auto-Retries)
+Scaling
+Telemetrics 
+	(including wire-level like MongoDB, DynamoDB)
+Distributed Tracing
+Security (mTLS, policies)
+
+
+
+Istio handson
+-------------
+minikube start --cpu 6 --memory 8192
+mkdir istio
+cd istio
+curl installable (refer documentation)
+	https://istio.io/latest/docs/setup/install/istioctl/
+	https://istio.io/latest/docs/setup/getting-started/#download
+
+	curl -fsSL https://github.com/istio/istio/releases/download/1.14.3/istio-1.14.3-linux-amd64.tar.gz -o istio.tar.gz
+
+
+
+tar xvfz <file>
+set path to istio/<istio-version>/bin/
+export PATH=$PATH:
+istioctl
+
+
+kubectl get ns
+kubectl get pod
+istioctl install
+
+	core installed
+	istiod installed
+	ingress gateways installed
+	installation complete
+	
+kubectl get ns
+	Pick the sample app from https://istio.io/latest/docs/setup/getting-started/
+
+kubectl apply -f <file.yaml>
+cd /home/centos/istio/istio-1.14.3
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.14/samples/bookinfo/platform/kube/bookinfo.yaml
+
+	launch an application 
+	
+	istio core and ms are running
+		in k8s cluster
+	
+	envoy proxies not injected.
+	
+	
+kubectl get ns default --show-labels
+kubectl label namespace default istio-injection=enabled
+
+kubectl get ns default --show-labels
+recreate application
+kubectl delete -f manifest 	
+kubectl apply -f manifest
+
+kubectl get pod
+	2/2 running
+	
+kubectl describe pod <any pod>
+
+	init containers
+	container id
+	
+	
+	
+Istio
+	configuration
+	service discovery
+	certificate management
+	gather telemetry data
+	
+
+Update all ClusterIP to NodePort
+	inside sample/addons/ folder
+	
+Open the port on aws also
+
+
+	kubectl apply -f samples/addons/
+	
+	kubectl get pod -n istio-system
+	kubectl get svc -n istio-system
+	
+	#kubectl port-forward svc/kiali -n istio-system 20001
+	
+ip:20001/kiali/console/namespaces/default/services/frontend?
+
+
+mandatory to have app: <name> label in deployment for kiali to work.
+
+gitHub: https://github.com/istio/istio/tree/master/samples/addons
+References: 
+https://github.com/marcel-dempers/docker-development-youtube-series/tree/master/kubernetes/servicemesh/istio
+################################################################################################
+
+https://www.tutorialspoint.com/consul/consul_introduction.htm
+
+Consul 
+	Hashicorp tool 
+	discovering and configuring a variety of different services 
+	Built on Golang. 
+	Some of the significant features that Consul provides are as follows.
+		Service Discovery − 
+			Using either DNS or HTTP
+			applications can easily find the services they depend upon.
+		Health Check Status − 
+			Health checks. 
+			Used by the service discovery components 
+				to route traffic away from unhealthy hosts.
+		Key/Value Store − 
+			Consul's hierarchical key/value store - use for 
+				dynamic configuration, 
+				feature flagging, 
+				coordination, 
+				leader election, etc.
+		Multi Datacenter Deployment − 
+			Consul supports multiple datacenters. 
+			Used for building additional layers of abstraction to grow to multiple regions.
+		Web UI − 
+			easy to use 
+			manage all of the features in consul.
+
+	Service Discovery
+		Most important feature of Consul. 
+		Defined as the detection of 
+			different services and 
+			network protocols 
+				using which a service is found. 
+		
+		
+	Comparison with ETCD and Zookeeper
+https://www.tutorialspoint.com/consul/consul_introduction.htm
+	
+--------------------------------------------------------------------------------
+Reference: https://www.youtube.com/watch?v=YqDZdPg3_tU
+Install consul based on documentation
+Install consul agent 
+
+start server
+consul agent -dev -client 0.0.0.0 -bind <private ip>
+yum install net-tools
+netstat -ntlp
+
+mkdir consul
+cd consul
+
+vi default.hcl
+client_addr = "0.0.0.0"
+bind_addr = "<private ip>"
+
+consul agent -server -config-dir consul -data-dir /tmp/consultserver -bootstrap-expect=1 -ui=1
+
+
+from browser
+public-ip:8500
+
+
+join client
+consul agent -join <private ip of server> -bind <private ip of client> -data-dir /tmp/consuldata
+
+stop client
+
+mkdir consul_config_dir
+cd consul_config_dir
+vi consul-service.json
+{
+	"service":{
+		"name":"myservice",
+		"port":80
+	}
+}
+
+consul agent -join <private ip of server> -bind <private ip of client> -data-dir /tmp/consuldata -config-dir ./consul_config_dir/
+
+
+on server
+dig @localhost -p 8600 myservice.service.consul
+
+consul services 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------
+Network configurations and Service Discovery - Consul
+
+	kubectl get nodes
+	kubectl get ns
+	kubectl create ns consul
+	
+	
+	install consul
+	https://github.com/b1tsized/vault-tutorial/tree/main/01-getting-started
+	
+	consul agent -bootstrap-expect=1 -data-dir=consul-data
+		-ui -bind=<ip address of where you are running it>
+		
+		
+	should run on 
+		localhost:8500/ui
+		
+	create two web ms with 
+		web and consul discovery dependency
+	https://github.com/b1tsized/vault-tutorial/tree/main/01-getting-started
+		Modify node while copying 
+		https://github.com/b1tsized/vault-tutorial/blob/main/01-getting-started/sys_file_templates/consul.service
+	
+Content of 
+	vault-tutorial/01-getting-started/sys_file_templates/ui.json should be 
+	vi /etc/consul.d/ui.json
+	
+{
+  "bind_addr": "0.0.0.0",
+  "advertise_addr": "10.0.2.15",
+  "addresses": {
+    "http": "0.0.0.0"
+  }
+}
+################################################################################################
+Continuous Integration - Jenkins
+################################################################################################
+Securing credentials - HashiCorp Vault & SSL & Certificates
+
+
+Hashicorp Vault 
+	secures, stores, and tightly controls access to confidential information like 
+		tokens, 
+		username/passwords, 
+		certificates, 
+		keys
+			API keys, 
+			ssh keys
+		other secrets 
+			in modern computing. 
+	
+	
+	manage secrets in cloud agnostic way
+	API-driven
+	allows to safely store and manage 
+		sensitive data in hybrid cloud env.
+	Generate dynamic short lived credentials
+		or encrypt application data on the fly.
+		
+		
+	where secrets used to be?
+		in file on dev. box.
+		in db
+		in repo like github
+		etc.
+		
+		smart people used to encrypt it
+		but where do you store the keys for encryption.
+		
+	Why Hashicorp vault
+		Centrally 
+			store
+			access
+			distribute 
+				secrets
+	
+	
+	Encrypt Application data
+		with ease
+	
+	Identity based access
+		Authenticate to and 
+		access different 
+			cloud
+			systems
+			endpoints 
+				using trusted identities
+
+	Usecase 1
+	---------
+	Secrets management
+		kv secrets engine
+		
+		client
+			calls api (https://kv/secrets/foo)
+				provide token
+			to vault
+				vault has policy
+				which confirms if user has access to this key
+				if user has access
+					from keyvalue (kv)
+					decrypted password/key is returned.
+					
+	
+		
+	Usecase 2
+	---------
+	Encryption as a service
+	transit secret engine
+	Webserver talks to Vault
+		gives the token
+		Vault checks the policy to confirm the access
+		vault returns the encrypted data back to the server
+		This can then be stored in db or s3 bucket
+		when an application is trying to use it, 
+			it would contact the vault to confirm if 
+				the data is correct.	
+				
+	Usecase 3
+	---------
+	Vault with a cloud like aws
+	client talks to vault passes the token
+		vault checks the policy
+		if the user is allowed, 
+		vault creates credentials in aws
+			aws returns keys/ userid/pwd to vault
+			vault returns it to the 
+				user/application.
+				
+	
+	Basic vault cli commands
+	
+	vault
+	https://github.com/b1tsized/vault-tutorial/tree/main/01-getting-started
+	https://servian.dev/get-started-with-hashicorp-vault-cc132dce627d
+https://www.digitalocean.com/community/tutorials/how-to-securely-manage-secrets-with-hashicorp-vault-on-ubuntu-20-04
+https://www.baeldung.com/vault	
+	 
+	 
+-----------------------------------------------------------------------------------------------------------	 
+https://www.youtube.com/watch?v=Oyvnicmxmbo
+https://hub.docker.com/_/vault
+
+COMMANDS
+Get docker image: docker pull vault
+
+Running image: 
+	docker run -d --rm --name vault-server 	--cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' -p 8200:8200 vault
+	
+Get IP Address: docker inspect vault-server | grep IPAddress
+Set environment variable: export VAULT_ADDR='http://172.17.0.2:8200'
+
+Install the client by following https://www.vaultproject.io/downloads
+
+Authenticate to server from CLI: vault login
+
+Write secret (CLI): vault kv put secret/tdc tdcpassword=test1234
+
+Read secret (CLI): vault kv get secret/tdc 
+
+INFO
+vault info: https://vaultproject.io
+vault CLI download: https://vaultproject.io/downloads
+docker image at: https://hub.docker.com/_/vault
+hvac info at: https://hvac.readthedocs.io/en/stable...
+
+==========================
+
+Python script (run pip install hvac first!):
+
+import hvac
+
+client = hvac.Client(url='http://172.17.0.2:8200',token="tdc-token")
+print(client.is_authenticated())
+read_response = client.secrets.kv.read_secret_version(path='tdc')
+
+print(read_response['data']['data']['tdcpassword'])
+-----------------------------------------------------------------------------------------------------------
+
+	 
+################################################################################################
+Observability and telemetry
+
+Observability, telemetry, and monitoring
+https://cloud.ibm.com/docs/java?topic=cloud-native-observability-cn
+Culture change around monitoring 
+	in cloud native. 
+	Applications should be 
+		highly available and 
+		resilient to failure
+			the methods that are used to achieve those goals are different. 
+	monitoring 
+		not to avoid failure
+		but to manage failure.
+
+In on-premises environments
+	infrastructure and middleware are provisioned 
+		based on planned capacity and 
+		high availability patterns, 
+	for example, 
+		active-active or active-passive. 
+Unexpected failures can be complex in this environment
+	requiring significant effort for problem determination and recovery. 
+	As an example, consider the 
+		tuning of 
+			heap size, 
+			timeouts, and 
+			garbage collection policies for Java applications.
+A cloud-native application is composed of 
+	independent microservices and 
+	required backing services. 
+Even though a cloud-native application as a whole must 
+	remain available and 
+	continue to function, 
+	individual service instances will 
+		start or stop as to adjust for capacity requirements or to recover from failure.
+
+
+Observability
+-------------
+
+Observability 
+	data exposure and easy access 
+		to information 
+		required to find issues when the communications fail, 
+		internal events do not occur as expected or 
+		events occur when they shouldn’t. 
+	
+Monitoring this fluid system requires each participant to be observable. 
+Each entity must produce appropriate data to support automated problem detection and alerting, manual debugging when necessary, and analysis of system health (historical trends and analytics).
+
+What kinds of data should a service produce to be observable?
+
+Health checks 
+	(often custom HTTP endpoints) 
+	help orchestrators, like Kubernetes or Cloud Foundry
+		perform automated actions to maintain overall system health.
+Metrics 
+	are a numeric representation of data 
+		collected at intervals into a time series. 
+	Numerical time series data  
+		is easy to store and query
+		helps when looking for historical trends. 
+	Over a longer period
+		numerical data can be compressed into less granular aggregates, 
+			daily or 
+			weekly.
+Log entries 
+	represent discrete events. 
+	Log entries are essential for debugging
+	often include stack traces and other contextual information 
+		can help identify the root cause of observed failures.
+Distributed, request, or end-to-end tracing 
+	captures the end-to-end flow of a request through the system. 
+	Tracing essentially captures both relationships between services 
+		(the services the request touched), and the 
+		structure of work through the system 
+		(synchronous or asynchronous processing, child-of or follows-from relationships).
+
+
+
+Telemetry
+---------
+Cloud-native applications 
+	rely on the environment for telemetry
+		automatic collection and transmission of data 
+			to centralized locations 
+			for subsequent analysis. 
+	one of the twelve factors 
+		"treat logs as event streams"
+		extends to all data a microservice produces to ensure it can be observed.
+Kubernetes has some built-in telemetry capabilities	
+	like Heapster
+	but it's more likely telemetry is provided by other systems that integrate with the Kubernetes control plane. 
+	As an example, 
+		two of Istio's components, 
+			Mixer and Envoy, act together to transparently collect telemetry from deployed applications.
+Failures are no longer 
+	rare, 
+	disruptive occurrences. 
+
+
+################################################################################################
+Infrastructure Monitoring Tool 1 - Datadog
+	Infrastructure Monitoring
+	Introduced for infra monitoring
+		Can now
+			performance monitoring
+			log monitoring
+			
+	SAAS
+		Software as  a service
+		No need to worry about
+			Out of box Datadog is
+				server service 
+				config
+				backup
+				restore
+				maintanance
+				scalability
+				availability
+				security
+				
+	How to get started?
+		https://www.datadoghq.com/
+	Pricing
+		https://www.datadoghq.com/pricing
+	Docs
+		https://docs.datadoghq.com/
+
+		
+	Setup free tier Datadog
+		Agent
+			windows
+			linux
+			
+		get centos instance
+			according to the direction in free account
+				install datadog
+				
+		ps -eaf | grep data
+		cat /etc/datadog-agent/datadog.yaml
+			wait for sometime.
+				check You have "1" 
+		
+
+
+		
+		we should be able to see the ui updated
+		
+		Flow
+			create an account
+			install agent
+			Crate a dashboard
+			Create a monitoring
+			Install a Integration
+		
+		
+		Architecture of Agent
+		---------------------
+		Agent has three main parts
+			collector
+			DogStatsD
+			Forwarder
+			
+		Collector:
+			Runs check on current machine
+				for configured integrations
+			Captures system metrics 
+				memory
+				CPU
+		DogStatsD
+			StatsD-compatible backend server
+			send custom metrics to from application
+		Forwarder
+			Retrieves data from both DogStatsD and Collector
+			Queues it up
+			Send to Datadog
+			
+		
+		New dashboard
+			58 min
+				add pie chart
+				and timeseries	
+				
+		Monitoring
+		----------
+		Create a host related metric
+			Create it 
+			Test it
+			Check if you got mail.
+			
+		
+				
+################################################################################################
+Log Monitoring Tool 2 - ELK stake
+
+	Why analyse log?
+		Issue Debugging
+		Predictive analysis
+		Security analysis
+		Performance analysis
+		
+	Problems with Log analysis
+		Hetrogenous env. of multiple applications
+			Inconsistent log format
+			Inconsistent time format
+			Decentralized logs
+			Expert knowledge requirement
+
+	Log Monitoring
+	
+	"ELK" 
+		acronym for three open source projects: 
+			Elasticsearch, 
+			Logstash, 
+			Kibana. 
+	
+	Elasticsearch 
+		search and analytics engine. 
+		open source
+		full-text search and 
+		analysis engine
+		based on the Apache Lucene search engine.
+		indexes and stores the data
+		
+	Logstash 
+		server side data processing pipeline 
+		log aggregator 
+			collects data from various input sources
+			parses and analyses very large data
+				structured/unstructured data analysis.
+			transforms it
+				executes different 
+					transformations and 
+					enhancements and 
+		sends it to a "stash" like Elasticsearch. 
+		Plugin support 
+			connect to various sources and platforms
+	
+	Kibana 
+		works on top of Elasticsearch
+		users visualize data with 
+			charts and 
+			graphs in 
+				Elasticsearch.
+		Real-time analysis.
+		Customization 
+			Summarization 
+			Charting
+			Help in Debugging
+		
+	Elastic Stack is the next evolution of the ELK Stack.		
+	Beats 
+		lightweight agents 
+			installed on edge hosts to 
+				collect different types of data for forwarding into the stack.
+	
+	
+	Features of ELK
+	---------------
+		Search engine/search server
+		NoSQL database i.e. 
+			can't use SQL for queries
+		Based on Apache lucene
+			provides RESTful API
+		Horizontally scale 
+		Reliability
+		Multi-tenancy
+		Use indexes
+			faster
+		
+
+	https://kaggle.com/
+		collect data from there
+		
+	Installing Elasticsearch
+		Dependency: Java 8 (+)
+		Install methods
+			Tar ball (.zip /.tar)
+			Manual rpm
+			yum
+		Ports:
+			9200: REST
+			9300: (Node communication)
+		Config file: /etc/elasticsearch/elasticsearch.yml
+		Log files: /var/lob/elasticsearch
+		Tweak to enable journal logging
+		
+		
+	Installing Kibana
+		Install methods
+			Tar ball (.zip /.tar)
+			Manual rpm
+			yum
+		Ports:
+			5601: localhost
+			Use nginx as reverse proxy
+		Config file: /etc/kibana/kibana.yml
+		Log files: Journal enabled (journalctl -f --unit=kibana)
+
+		nginx reverse proxy
+		/etc/nginx/nginx.conf
+			- Delete the default server block
+		/etc/nginx/conf.d/kibana.conf
+			server{
+				listen 80;
+				server_name server.example.com;
+				location/{
+					proxy_pass http://localhost:5601
+				}
+			}
+
+
+	Installing Logstash
+		Install methods
+			Tar ball (.zip /.tar)
+			Manual rpm
+			yum
+		Ports:
+			5044: localhost
+
+	Filebeat
+		Install methods
+			Tar ball (.zip /.tar)
+			Manual rpm
+			yum
+		Config file: /etc/filebeat/filebeat.yml
+		
+
+justmeandopensource
+	https://github.com/justmeandopensource/elk/blob/master/INSTALL-ELK-6-CentOS7.md
+
+
+	after installing elasticsearch
+		systemctl status elasticsearch
+		systemctl start elasticsearch
+		sudo systemctl enable --now elasticsearch.service 
+		systemctl status elasticsearch
+
+		ls /var/log/elasticsearch
+		jouralctl --unit elasticsearch
+		yum install net-tools
+		netstat -nltp
+		cat /var/log/elasticsearch
+		jouralctl --unit elasticsearch
+		
+		
+	after installing kibana
+		vi /etc/kibana/kibana.yml
+			server.host: "0.0.0.0"
+			server.port: 5601
+		systemctl restart kibana	
+		
+		
+		rpm -qc filebeat
+		
+		vi /etc/
+			(a)	enabled: true
+			(b)	
+paths:
+    - /var/log/messages
+    - /var/log/secure
+
+			(c)
+			comment elasticsearch output
+#output.elasticsearch:
+  # Array of hosts to connect to.
+#  hosts: ["localhost:9200"]
+
+			(d)
+			enable logstash output
+output.logstash:
+  # The Logstash hosts
+  hosts: ["localhost:5044"]
+
+  # Optional SSL. By default is off.
+  # List of root certificates for HTTPS server verifications
+  ssl.certificate_authorities: ["/etc/pki/tls/certs/logstash.crt"]		
+
+	systemctl restart filebeat
+	journalctl --unit filebeat
+	
+	
+	in kibana
+		management
+		Index Patterns
+		Create Index Pattern
+		copy paste filebeat-2022.08.15 into text field
+			click next
+			select timestamp
+			create indexes
+		Click discover on top left
+			select filebeat on top left
+				check client name
+	-----------------------
+
+################################################################################################
+Ignore below
+
+
+
+	yum update -y
+	yum install -y java
+	java -version
+	hostname
+	ip a
+	rmp --import https://
+	cat << EOF > /etc/yum.repos.
+	
+	yum install -y elasticsearch-oss
+	vi /etc/elasticsearch/elasticsearch.yml
+		/cluster
+			change name
+				elk
+		node.name: <hostname>
+		/network.host: <ip>
+	add	
+		ingest.geoip.downloader.enabled: false
+	systemctl daemon-reload
+	systemctl restart elasticsearch
+	
+	to debug 
+		cat /etc/log/elasticsearch/elasticsearch.log
+		cd /usr/share/elasticsearch/bin
+./elasticsearch-create-enrollment-token -s node
+
+			copy paste the token to kibana
+			
+			configure kibana host to ip address
+			and restart the kibana
+		
+		cd /usr/share/kibana/bin
+		./kibana-verification-code
+		
+		
+	
+################################################################################################
+Performance & RUM Monitoring - NewRelic
+################################################################################################
+
+https://newrelic.com/
+https://newrelic.com/signup
+
+New Relic One
+	Lets you 
+		find
+		visualize 
+		understand 
+			everything happening across 
+				s/w env.
+	Cut through complexity
+		provide context
+		see across artificial organizational bourndaries
+			quickly finding and fixing problems.
+			
+	
+New Relic supports
+	New Relic APM
+		Flagship product
+		Montior performance and availability of web applications
+	New Relic Browser
+		Browser specific data 
+		Understand software performance from end user perspective
+	New Relic Mobile
+		Quickly pinpoint performance issues in mobile apps
+			operating in complext production env.
+	New Relic Infrastructure
+		Gives a precise picture of dynamically changing systems
+		We can scale rapidly and deploy intelligently
+		
+	New Relic Insights
+		Query application 
+			business metrics
+			performance data 
+			customer behaviors
+				at lightning speed
+	New Relic Synthetics
+		Test and find issues
+			with software business critical functionlity
+				before real users do.
+				
+				
+	
+New Relic infra
+	Register at NewRelic - 30 days
+	Create one VMs or use existing vm
+	Install NewRelic infra agent
+	Visualize a vm metrices on NewRelic one.
+	
+	
+	
+---------------------------------------------------------------------------------------------
+Site Reliability Engineering
+
+	Made of s/w engg.
+	Build and implement s/w
+	improve reliability of system/services
+	
+	Most important: 
+		Reliability
+			changes
+			
+	DevOps	
+		1. Reduce organization silos
+			improve throughput by	
+				breaking org. barriers
+				improve collaboration
+		2. Accept failure as normal
+			computers and machines are not 100% reliable
+			human's are lot more unreliable than computers
+		3. Implement gradual change	
+			small changes are 
+				easy to 
+					review
+					manage
+					maintain
+					ensure qos
+					rollback/fix
+						reduce MTTR
+		4. Leverage tooling and automation
+		5. Measure everything
+		
+
+	SRE class implements devops
+	why SRE?
+	
+		
+	Different views on SRE
+	Google view
+		
+		SRE
+		1. Reduce organization silos
+			SRE takes ownership of production
+			Define common 
+				tooling
+				goal
+				path
+		2. Accept failure as normal
+			Accept accidents and failures
+			blameless postmortem
+			Don't repeat failure same way more than once
+			Accept failures as normal by 
+				encode error budget
+					how much system is allowed to 
+						go out of spec.
+					Identify ways to mask it for customers
+		3. Implement gradual change	
+			Canary changes 
+			test it for small users 
+				before release big
+		4. Leverage tooling and automation
+			Eliminate manual work 
+		5. Measure everything
+			health check
+			specific alerts
+				pod x failed in y ns with 500 error at 	
+	
+	
+	SRE
+		Define availability
+		Level of availability
+		Plan in case of failure
+		
+		
+	SLI (Service Level indicators)
+		for a particular time.
+		
+		Request Latency
+		Batch throughput
+		Failures per request
+		
+		watched closely by SRE
+			on daily basis
+	e.g. 
+		a. 99th percentile latency of requests 
+			received in the last 5 min.
+				less than 300 ms
+				
+The 95th percentile and 99th percentile values 
+	point at which 95% and 99% of your traffic is experiencing latency 
+	i.e. 5% and 1% of your traffic is experiencing latency values that are out-of-range.				
+				
+				
+		b. ratio of errors to total requests 
+			last 5 min. 
+				less than 1%
+		
+		
+	
+	SLO (Service Level Objectives)
+		Binding target for a collection of SLIs
+		e.g. Total amont of downtime in a year was less than 9 hours
+		
+		has upper and lower bounds
+		higher SLO
+			teams slow down
+		lower SLO
+			quality can be compromised
+		wathed between SRE and product
+			on monthly/quaterly/annual
+		
+	SLA (Servie Level Agreement)
+		Business agreement between 
+			a customer and service provider
+			based on SLOs
+		watched between sales and customers
+			violations result in payments
+			
+	
+	SLA should be more lenient than SLO
+		SLO failure should be a warning
+			to act immediately.
+		
+	
+	
+	The silos continue between Dev and SRE? How to solve?
+	-----------------------------------------------------
+	Use Error budgets
+	Risk and availability
+	Don't attempt 100% availability
+		expensive
+		tech. complex
+		user's don't realize benefit
+			e.g. server 100% up but mobile is 99.9999% up. 
+			so server uptime doesn't help.
+			
+	Work with PM to define
+		availability target of the service
+		error budet
+
+	Accepts risks of system dictates 
+		SLO		
+		SLO mathematically defines Error budget
+	
+
+	SLO : 99.9%
+	Error budget: 43.2 min/month failures
+	
+	99.9% uptime = .1% downtime
+	= .001 * 30 days / monthly * 24hour/day *60 min/ hour 
+	= 43.2 min/month
+
+	Error budgets
+		balance innovation and stability	
+	PM's to accelerate delivery	
+		should agree to lower SLO
+		
+	Track the SLO and SLO breaches using 
+		monitoring system
+		if it is about to breache
+		reduce the delivery frequency 
+		focus on stability
+		less on innovation or new features
+		
+		
+	But can dev. release more frequently
+		result in SRE to work overtime
+		Solution: Every one should buy Error budget
+		For accelerating 
+			ask exception 
+			give golden bullets to VP for this.
+			
+	How about outside issues
+		e.g. under cable wire cut
+		will it affect my error budget
+		
+		Solution: error budget should be bought in by all
+		
+		How much error budget to 
+			give to dependency?
+			give to my dev?
+			
+			Another reason for not trying for 100% availability
+			because dependencies can't be 100% up.
+			
+	
+	Summary:
+		Consider accidents as normal
+		Quantify accidents
+		Measure accidents
+		Define acceptable accidents
+		Define expectation/ratio between innovation and accidents
+		
+	
+	Toil and Toil Budget?
+	---------------------
+	How about works like 
+		email, 
+		expense report
+		meeting
+		traveling
+			etc.
+		These are Overhead - not toil
+		
+	What is Toil?
+	Characteristics of Toil
+		Manual
+		Repeatable
+		Automatable 
+		Tactical 
+		Devoid of long term value
+		Scales linearly as service grows
+		
+	Measuring Toil
+		Don't measure toil and project work
+		Account on call time as toil
+		Survey, sample and log toil
+	 
+			
+	But how to meet these?
+	----------------------
+	Risk Analysis
+		List of items that may cause SLO violations
+		Categorize as
+		
+					^
+		Frequent	|
+		Common		|
+		Rare		|
+					--------------------------------------->
+					Minimal		Damaging	Catastrphic
+					
+		
+Example use case
+		e.g. needs db back up every 2 months.
+			takes 2 hours to backup
+			
+			time between failures = 30 days
+			impact duration = 120 min.
+			affects 100% users
+			
+			120 min * 12 months * 100% = 1440 bad min/year
+			
+		If error budget calculation(99.5% reliability)
+		(100 - 99.5)/100 * 365 days/year * 24 hours/day * 60 min./hour = 2628
+		Monthly db backup is taking half of the error budget.
+		
+		
+	are the more problems?
+	every two weeks db becomes slow.
+	takes 30 min. for people to realize and support ticket to come.
+		(consider this time also)
+	30 min. to resolve
+	affects 50 % of users
+	
+	30 min. to detect * 30 min. to resolve * 26 weeks/year * 50 % users
+	= 780 bad min./year
+	
+	likewise
+	
+	
+	TTD: Time to detect
+	TTR: Time to resolve
+	Calculated expected cost
+	Risk				TTD	(min)	TTR	(min)	Freq/yr		Users		Bad/Year
+	Prod. db backup		0			120			12			100%		1440 min
+	Degrade QoS			30 			30			26			50			780
+	Datacenter failure	15			480			1			100			495
+	DDoS by IoT botnet	120			300			6			80			2016
+	Bad code deploy		45			15			150			25			2250
+	Upstream provider	5			30			6			75			157
+		failure
+																		------------
+																		7138								
+	all together go beyond error budget
+	
+	
+	options
+	1. Identify action items which can bring below error budget
+		a. release less
+		b. less DDoS attack testing
+		etc.
+		
+		if none of them possible
+			discuss with stakeholders
+			modify SLO and have larger error budget
+			
+		
+		
+	How to reduce noise and manage alerts better?
+	---------------------------------------------
+	alert setup to know when something goes wrong
+	But by the time i get up, LB has already taken care
+	
+	So alerts either not enough or 
+	unnecessary as the issue is already taken care.
+	
+	Automated system keeps checking
+	SLI
+		is the operation successful?
+		has it happened with in the defined timeframe.
+	SLO
+		integrated with SLI for last 30 days 
+		measure it for 99.9% or 99.999%
+		
+	how about alerts?
+		we should reduce 
+			redundant alerts
+				so we focus on real problems
+	Solution:
+		Define 
+			slow burn alerts
+				if your quarterly budget is under threat 
+					after 2.5 months
+				Raise a ticket for someone to fix during business hours
+			fast burn alerts
+				If your quarterly budget is under risk in few hours
+					immediate alert.
+	
+		For doing this better you need better observability
+	
+	Observability
+		Structured logs
+		Metrics
+		Traces
+		
+	
+	Structured logs
+	----------------------
+		Design your logs very cleverly
+		
+		for e.g.
+		for each request - it may include
+			IP address
+			timestamp
+			process id
+			req. id
+			protocol
+			type of request: GET/POST
+			Request URL
+			Response type
+			Response code
+			Response size
+			user agent
+			
+		debug logs may include
+			log level 
+			date
+			timestamp
+			process id
+			call site
+			req. id
+			detailed log statement
+		
+	Metrics
+	-----------
+	generally painted on a graph
+		agreement type 
+		e.g. number of queries
+			latency
+				distribution over a period of time
+		cpu load
+			over a period of time
+			
+	
+		
+		
+	Traces
+	-----------
+	traces of each request
+	like
+	msA1
+		msB5
+			msC15
+				
+		includes 	
+			timing 
+			dependency
+			sequence of events
+			
+	
+	How?
+	----
+	Refer to metrics
+		when SLI is broken
+			identify where is it broken
+			refer pattern 
+				which region, service, feature is broken
+		Look at the traces to id
+			identify the dependencies
+				define context where you need to debug/attack
+				identify which service is taking more/less time
+				identify patterns
+		Look at logs to 
+			identify the real issue
+			fix it
+		
+		Monitor to confirm the fix has brought your SLI within limit
+		
+		
+	
+	Different types of chaos
+		1. too much data
+		2. slow internet
+		3. firewalls
+		4. vpn
+		5. too much communication or 
+			too little communication
+		
+		
+		Humans
+		------
+		Define very clear roles for each of the humans
+			do exactly what they are expected to 
+				without getting into way of others
+			
+	Need
+		1. A process to declare incidents
+		2. A dashboard for viewing current incidents
+		3. A database for who to contact for each incidents
+		
+		Define threashhold
+			when to declare and incident
+			who can declare incidents
+		
+	Roles
+	
+		1. Incident commander (IC)
+			make strategic decisions
+			delegate additional roles
+		
+			should define
+				2. operations lead
+					detailed understanding
+					change state of the system
+					e.g.
+						run commands
+						grab log files
+							
+			3. stakeholders
+			4. support team
+			5. Communication lead
+				communicating with external sources
+			6. Planning lead
+				documentation of plans
+			7. Logistics load
+				ensure people have all supplies as required.
+				
+		
+		Blameless postmortem or Retrospective
+		-------------------------------------
+		Ensure it is blameless
+		Collect metadata
+		e.g.
+		1. What systems were affected?
+		2. Who was involved in responding?
+		3. How do we find out about the events
+		4. When did we start responding?
+		5. What mitigations did we deploy?
+		6. When the incident conclude?
+		
+		This should be collaborative effort
+		Draft prepared by IC
+			updated by everybody in the team
+		
+		
+		Define what fix was temporary and needs rollback/fix
+		e.g. 
+			increase cpu on vm temporarily
+			directing traffic out of a zone.
+			
+		Remember 
+			1. failures may have multiple 
+				reasons
+				learning opportunities
+				fixes 
+					etc.
+				so eliminate focusing on root cause
+				
+		File issue in system for each issues
+			Tag it with a postmortem tag
+				should help to identify 
+					how much risk you are taking
+			focus not on 
+				how many are remaining
+				how many fixed
+			but focus on 
+				how much risk you are taking
+				what is the probability of that on 
+					error budget violations
+			
+			
+		Also try to identify positive motivators
+			like
+				people who went beyond
+				machines that performed beyond
+			appreciate that
+			
+	Define machine readable metadata
+		track progress to overall incidence response managemnt process
+			e.g. 
+				decrease in total time to resolve incidence
+				know whether a release was involved in failure
+				
+################################################################################################
+Emergency Response & Alerting & Chat & Notification SMTP, SES, SNS,Pagerduty & Slack - Pagerduty & Slack
+################################################################################################
+Designing for fault tolerance \ HA
+----------------------------------
+
+	What is fault tolerance
+	What is HA
+	
+	
+https://www.devopsinstitute.com/sre-building-a-culture-of-reliability-resiliency-and-risk-management/
+
+
+
+
+Site Reliability Engineering (SRE) 
+	culture of building and operating 
+		reliable, 
+		resilient, 
+		risk managed software systems. 
+
+	E: for engineering.
+	
+Traditional software development 
+	reliability 
+		in design phase. 
+	Changes to the functionality 
+		reliability requirements. 
+	
+	Non-functional requirements 
+		not reviewed as often. 
+	Quality of Service (QoS) parameters 
+		overlooked at development 
+		
+		Result: operational issues subsequently.
+
+The goal 
+	not push the software to the production 
+	but run and manage 
+		efficiently and 
+		effectively 
+			once it is live.  
+	SRE bridges this gap 
+		well-defined set of 
+			practices, 
+			principles and 
+			culture 
+				built on DevOps foundations with strong emphasis on engineering capabilities.
+
+SRE 
+	sets measurable engineering objectives 
+		mapping to Service Level Objective (SLO) and 
+		enables monitoring and tracking of QoS parameters such as:
+
+	Reliability – 
+		Ability of the system to function correctly
+		failure free software operation
+	Availability – 
+		System response to disruption and fault tolerance
+		avoid down-time
+		Stateless application design
+		fail forward database design
+		HA data management
+	Recoverability – 
+		System ability to recover from incidences 
+			through actionable alerts and 
+			next-gen automation
+	Serviceability – 
+		Speed with which system can be repaired
+		System health assessment
+		monitoring and logging mechanism
+		end user experience
+	Elasticity – 
+		System scalability and performance with reference to 
+			data, 
+			traffic, 
+			peak load and 
+			response time
+	Resiliency – 
+		System ability to withstand potential failure
+		focus on 
+			Mean Time to Repair (MTTR) over 
+				average time it takes to recover from a product or system failure
+			Mean Time Between Failures (MTBF)
+				average time elapsed between a 
+					failure and 
+					next time it occurs.
+	Risk Budgeting – 
+		Ongoing process of risk measurement, 
+		attribution and 
+		allocation. 
+		Optimal risk allocation to maximize expected return
+	It’s of paramount importance to 
+		standardize SLO, 
+		identify KPIs (Key performance indicators), 
+		create balanced scorecards and 
+		continuously drive measurement, 
+		monitoring and tracking. 
+		
+How you balance 
+	change velocity 
+	vs. 
+	availability, 
+	reliability, 
+	security 
+		and other operational attributes 
+	
+	Implementation of 
+		continuous delivery, 
+		continuous integration, 
+		continuous testing, 
+		continuous release and 
+		deployment 
+			coupled with collaboration will drive the required cultural change. 
+	
+	The system must recover from failure by automation.
+"Anything that can go wrong will go wrong” -- Murphy’s Law
+
+
+SRE team should be responsible for 
+	system design and 
+	development, 
+	release management, 
+	capacity management, 
+	change management, 
+	incidence management, 
+	automation, 
+	availability, 
+	latency, 
+	performance, 
+	security and 
+	monitoring of their services.
+
+SRE will deliver differentiated value proposition 
+	in digital reinvention journey 
+	provide fast and uninterrupted services 
+		through resilient systems, 
+		drive operational excellence and 
+		cost optimization 
+			by adopting automation and 
+			best practices, 
+			risk management frameworks 
+				to address risk tolerance of services and 
+				bridge the relationship gap 
+					between development and 
+					operations teams and 
+					enable them to communicate with 
+					cost of reliability.
+
+
+
+SRE should 
+	design, 
+	build, 
+	operate and 
+	enhance 
+		software systems 
+
+Culture of 
+	risk managed, 
+	reliable and 
+	resilient 
+		digital footprint and 
+SRE is at the heart of all these happenings.	
+	
+	
+https://linkedin.github.io/school-of-sre/level101/systems_design/fault-tolerance	
+Failures 
+	not avoidable 
+	will happen all the time
+build systems 
+	can tolerate failures or 
+	recover from them.
+
+“Complex systems contain changing mixtures of failures latent within them” 
+	-- How Complex Systems Fail.
+
+
+Fault Tolerance - Failure Metrics
+Common failure metrics that get measured and tracked for any system.
+
+	Mean time to repair (MTTR): 
+		Average time to repair and restore a failed system.
+	Mean time between failures (MTBF): 
+		Average operational time between one device failure or system breakdown and the next.
+	Mean time to failure (MTTF): 
+		Average time a device or system is expected to function before it fails.
+	Mean time to detect (MTTD): 
+		Average time between the onset of a problem and when the organization detects it.
+	Mean time to investigate (MTTI): 
+		Average time between 
+			detection of an incident and 
+			when the organization begins to investigate its cause and solution.
+	Mean time to restore service (MTRS): 
+		Average elapsed time from the detection of an incident 
+			until the affected system or component is again available to users.
+	Mean time between system incidents (MTBSI): 
+		Average elapsed time between 
+			detection of two consecutive incidents. 
+		(MTBSI = MTBF + MTRS).
+	Failure rate: 
+		Another reliability metric, 
+		frequency of system fails. 
+		Number of failures over a unit of time.
+
+Refer
+https://www.splunk.com/en_us/data-insider/what-is-mean-time-to-repair.html
+Fault Tolerance - Fault Isolation Terms
+---------------------------------------
+	Systems should have a short circuit. 
+	-----------------------------------
+	Say in our content sharing system, 
+		if “Notifications” is not working, 
+		the site should gracefully handle that failure 
+			by removing/replacing the functionality 
+			instead of taking the whole site down.
+	Swimlane is one of the commonly used fault isolation methodologies. Swimlane adds a barrier to the service from other services so that failure on either of them won’t affect the other. Say we roll out a new feature ‘Advertisement’ in our content sharing app. We can have two architectures Swimlane
+	If Ads are generated on the fly synchronously during each Newsfeed request, the faults in the Ads feature get propagated to the Newsfeed feature. Instead if we swimlane the “Generation of Ads” service and use a shared storage to populate Newsfeed App, Ads failures won’t cascade to Newsfeed, and worst case if Ads don’t meet SLA , we can have Newsfeed without Ads.
+	Let's take another example, we have come up with a new model for our Content sharing App. Here we roll out an enterprise content sharing App where enterprises pay for the service and the content should never be shared outside the enterprise.
+
+Swimlane Principles
+	Principle 1: Nothing is shared (also known as “share as little as possible”). The less that is shared within a swim lane, the more fault isolative the swim lane becomes. (as shown in Enterprise use-case)
+	Principle 2: Nothing crosses a swim lane boundary. Synchronous (defined by expecting a request—not the transfer protocol) communication never crosses a swim lane boundary; if it does, the boundary is drawn incorrectly. (as shown in Ads feature)
+
+Swimlane Approaches
+	Approach 1: Swim lane the money-maker. Never allow your cash register to be compromised by other systems. (Tier 1 vs Tier 2 in enterprise use case)
+	Approach 2: Swim lane the biggest sources of incidents. Identify the recurring causes of pain and isolate them. (if Ads feature is in code yellow, swim laning it is the best option)
+	Approach 3: Swim lane natural barriers. Customer boundaries make good swim lanes. (Public vs Enterprise customers)
+
+Refer
+https://learning.oreilly.com/library/view/the-art-of/9780134031408/ch21.html#ch21
+Applications in SRE role
+Work with the DC tech or cloud team to distribute infrastructure such that its immune to switch or power failures by creating fault zones within a Data Center https://docs.microsoft.com/en-us/azure/virtual-machines/manage-availability#use-availability-zones-to-protect-from-datacenter-level-failures
+Work with the partners and design interaction between services such that one service breakdown is not amplified in a cascading fashion to all upstreams	
+	
+
+################################################################################################
+Training in relevant topics from areas like https://aws.amazon.com/builders-library/
+################################################################################################

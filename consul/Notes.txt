@@ -1,0 +1,159 @@
+Getting Started & Installing Vault
+Pre-reqs
+
+Domain
+
+Centos
+
+Packages
+
+unzip
+jq
+
+Installing Consul Backend
+Download Consul
+
+	curl -L -o consul_1.9.1_linux_amd64.zip https://releases.hashicorp.com/consul/1.9.1/consul_1.9.1_linux_amd64.zip
+
+Unzip Consul
+
+	unzip consul_1.9.1_linux_amd64.zip
+
+Move Consul to User Bin
+
+	sudo mv consul /usr/bin/
+
+Verify Consul is usable
+
+	consul --version
+
+Create Systemd Service for Consul
+
+	sudo vi /etc/systemd/system/consul.service
+
+Copy in Contents of consul.service
+
+Save and exit file
+
+Create /etc directory for Consul
+
+	sudo mkdir /etc/consul.d
+
+Make UI config file
+
+	sudo vi /etc/consul.d/ui.json
+
+Copy contents of ui.json
+
+Save and exit file
+
+Reload the daemon
+
+	sudo systemctl daemon-reload
+
+Start the consul Service
+
+	sudo systemctl start consul
+
+Check status of the Service
+
+	sudo systemctl status consul
+
+Enable Consul as a service upon reboot
+
+	sudo systemctl enable consul
+
+Creating A Cert For The Server
+Installing Certbot
+https://www.vultr.com/docs/how-to-install-a-lets-encrypt-ssl-tls-certificate-on-centos-7-with-apache-web-server/
+
+Get cert for subdomain of server
+
+	sudo certbot certonly --standalone -d {{subdomain.example.com}}
+
+Make note of folder locations listen in results
+
+Example: /etc/letsencrypt/live/{{subdomain.example.com}}/fullchain.pem /etc/letsencrypt/live/{{subdomain.example.com}}/privkey.pem
+
+Install Hashicorp Vault
+Download Hashicorp Vault
+
+	curl -L -o vault_1.6.1_linux_amd64.zip https://releases.hashicorp.com/vault/1.6.1/vault_1.6.1_linux_amd64.zip
+
+Unzip Vault
+
+	unzip vault_1.6.1_linux_amd64.zip
+
+Move Vault to User Bin
+
+	sudo mv vault /usr/bin/
+
+Verify Vault is usable
+
+	vault --version
+
+Make Vault directory
+
+	sudo mkdir /etc/vault
+
+Create the config file for Vault
+
+	sudo vi /etc/vault/config.hcl
+
+Copy contents of config.hcl and replace pathways for certs and add server IP
+
+Note: This config uses port 8200 for all communication with vault to change it change the port specified in the config
+
+Create the Vault service
+
+	sudo vi /etc/systemd/system/vault.service
+
+Copy contents of the vault.service file
+
+Reload the daemon
+
+	sudo systemctl daemon-reload
+
+Export the Vault Address value
+
+	export VAULT_ADDR="https://{{subdomain.example.com}}:8200"
+
+Set value in bashrc to reload on reboot
+
+	echo "export VAULT_ADDR=https://{{subdomain.example.com}}:8200" >> ~/.bashrc
+
+Enable vault autocomplete
+
+	vault -autocomplete-install
+
+complete -C /usr/bin/vault vault
+
+Start Vault
+
+	sudo systemctl start vault
+
+Verify status of Vault
+
+	sudo systemctl status vault
+
+Enable Vault upon restart
+
+	sudo systemctl enable vault
+
+Initialize the Vault
+
+	vault operator init
+
+Save the unseal keys and token. These are only generated once and should be saved in a secure location.
+
+Unlock the vault by entering in 3 keys you'll need to use the following command 3 times
+
+	vault operator unseal
+
+Check to see the vaults sealed status sealed = false means that the vault is unsealed
+
+	vault status
+
+Login via auth Token
+
+	vault login

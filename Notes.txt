@@ -1,0 +1,825 @@
+################################################################################################
+################################################################################################
+"Overview of Web Server and Web clients 
+################################################################################################
+	- Http , Https, SSH, RDP, TCP connectivity
+
+---------------------------------------------------------------------------------------------------------
+Http
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+An overview of HTTP
+HTTP 
+	protocol for fetching resources such as HTML documents. 
+	Foundation of any data exchange on the Web 
+	client-server protocol
+		requests are initiated by the recipient
+			usually the Web browser. 
+		A complete document is reconstructed from the different sub-documents fetched
+			for instance, 
+				text, 
+				layout description, 
+				images, 
+				videos, 
+				scripts, and 
+				more.
+ 
+		Refer image in https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+		
+		Clients and servers 
+			communicate by exchanging individual messages 
+				(not stream of data). 
+		requests		
+			The messages sent by the client
+				usually a Web browser
+		responses	
+			messages (responses) sent by the server.
+		next image
+		
+		Application layer protocol 
+			sent over TCP, or 
+			TLS-encrypted TCP connection
+			(though any reliable transport protocol could theoretically be used)
+		Due to its extensibility
+			used to not only fetch 
+				hypertext documents, but also 
+				images and 
+				videos 
+				post content to servers
+					HTML form results. 
+		
+
+	Components of HTTP-based systems
+		HTTP is a client-server protocol: 
+			requests are sent by one entity, 
+				the user-agent (or a proxy on behalf of it). 
+				user-agent
+					browser
+					api calls
+					other automation code 
+
+		Each individual request 
+			sent to a server
+			handles it and provides an answer called the response. 
+		Between client and server 
+			numerous entities
+			collectively called proxies
+				perform different operations 
+					e.g. gateways 
+						caches 
+						routers, 
+						modems
+						etc.
+
+		Client server chain
+			Layered design of the Web
+			h/w between client and server is hidden 
+				in the network and transport layers. 
+			HTTP is on top
+				application layer. 
+		
+		
+	Client: the user-agent
+	----------------------
+	user-agent 
+		any tool that acts on behalf of the user. 
+		primarily Web browser
+		can also be	
+			programs
+	Client
+		always entity initiating the request. 
+		never the server 
+			
+	To display a Web page
+		browser sends an original request 
+			to fetch the HTML document 
+			that represents the page. 
+		It then parses this file(response), 
+			making additional requests corresponding to 
+				scripts
+				layout information (CSS) 
+				images and videos
+		The Web browser 
+			combines these resources 
+			present the complete document
+			Scripts executed by the browser 
+				can fetch more resources in later phases 
+				browser updates the Web page accordingly.
+	A Web page is a hypertext document. 
+		i.e. some parts are 
+			links
+				can be activated 
+				(usually by a click of the mouse) 
+		The browser translates these clicks into HTTP requests
+			further interprets the HTTP responses 
+			to present the user with a clear response.	
+
+
+	The Web server
+		serves the document 
+			as requested by the client. 
+		Appears as a single machine virtually; 
+		but it may actually be a collection of servers 
+			sharing the load 
+			(load balanced), 
+			or a complex piece of software interrogating other computers 
+			(like cache, a DB server, or e-commerce servers), 
+			totally or partially generating the document on demand.
+
+		With HTTP/1.1 and the Host header
+			they may even share the same IP address.
+
+
+	Proxies
+		Between the Web browser and the server
+			numerous computers and machines relay the HTTP messages. 
+		Due to the layered structure of the Web stack
+			most of these operate at the 
+				transport, 
+				network or 
+				physical levels, 
+			becoming transparent at the HTTP layer 
+		Those operating at the application layers are generally called proxies. 
+		These can be transparent
+			forwarding on the requests they receive without altering them in any way, or non-transparent, 
+			in which case they will change the request in some way before passing it along to the server. 
+		Proxies may perform numerous functions:
+			caching 
+				(public or private cache, like the browser cache)
+			filtering 
+				(like an antivirus scan or parental controls)
+			load balancing 
+				(to allow multiple servers to serve different requests)
+			authentication 
+				(to control access to different resources)
+			logging 
+				(allowing the storage of historical information)
+
+
+	Basic aspects of HTTP
+		HTTP is simple
+			designed 
+				simple 
+				human readable
+			complexity introduced in HTTP/2 by encapsulating HTTP messages into frames. 
+				still http is simple
+			HTTP messages can be 
+				read and understood by humans
+				providing easier testing for developers
+				reduced complexity for newcomers.
+
+		HTTP is extensible
+			Introduced in HTTP/1.0, 
+			HTTP headers 
+				make this protocol 
+				easy to extend and experiment 
+				
+
+		HTTP is stateless, but not sessionless
+			HTTP is stateless: 
+				there is no link between two successive requests 
+				advantages and disadvantages of statelessness
+				
+				But HTTP cookies 
+					allow the use of stateful sessions. 
+					Using header extensibility
+						HTTP Cookies are added to the workflow, 
+						allow session creation on each HTTP request 
+							share the same context/state.
+
+		HTTP and connections
+			Connection is controlled at the transport layer
+				fundamentally out of scope for HTTP. 
+			HTTP doesn't require the underlying transport protocol to be connection-based; 
+			
+			should be reliable
+			not lose messages 
+				(at minimum, present an error). 
+			Most common transport protocols on the Internet, 
+				TCP is reliable and 
+				UDP isn't reliable. 
+			HTTP therefore relies on the TCP standard
+				connection-based.
+			Before a client and server can exchange an HTTP request/response pair
+				they must establish a TCP connection
+				requires several round-trips. 
+			The default behavior of HTTP/1.0 
+				open separate TCP connection for each HTTP request/response pair. 
+				less efficient than sharing a single TCP connection 
+					when multiple requests are sent in close succession.
+			To mitigate 
+				HTTP/1.1 
+					introduced pipelining 
+						(difficult to implement) and 
+					persistent connections: 
+						underlying TCP connection can be partially controlled using the Connection header. 
+				HTTP/2 
+					multiplexing messages over a single connection
+					keep the connection warm and more efficient.
+
+			Experiments are in progress to design a better transport protocol more suited to HTTP. 
+			For example, Google is experimenting with QUIC 
+				builds on UDP 
+					provide more reliable and efficient transport protocol.
+
+		What can be controlled by HTTP
+			Extensible nature of HTTP 
+				allowed more control and functionality of the Web. 
+			Cache and authentication methods 
+				functions handled early in HTTP history. 
+			The ability to relax the origin constraint, by contrast, was only added in the 2010s.
+
+		List of common features controllable with HTTP:
+
+			Caching 
+				How documents are cached 
+					can be controlled by HTTP. 
+				The server can instruct proxies and clients about 
+					what to cache and 
+					for how long. 
+					The client can instruct intermediate cache proxies to ignore the stored document.
+			Relaxing the origin constraint 
+				To prevent snooping and other privacy invasions, 
+					Web browsers enforce strict separation between Web sites. 
+				Only pages from the same origin can access all the information of a Web page. 
+				Though such a constraint is a burden to the server, 
+				HTTP headers can relax this strict separation on the server side, 
+					allowing a document to become a patchwork of information 
+						sourced from different domains; 
+						there could even be security-related reasons to do so.
+			Authentication 
+				Some pages may be protected 
+				specific users can access them. 
+				Basic authentication may be provided by HTTP, 
+					either using the WWW-Authenticate and 
+					similar headers or 
+					by setting a specific session using HTTP cookies.
+			Proxy and tunneling 
+				Servers or clients 
+					often located on intranets 
+					hide their true IP address from other computers. 
+					HTTP requests then go through proxies 
+						to cross this network barrier. 
+					Not all proxies are HTTP proxies. 
+						The SOCKS protocol, for example, operates at a lower level. 
+						Other protocols, like ftp, can be handled by these proxies.
+			Sessions 
+				Using HTTP cookies 
+					allows you to link requests 
+						state of the server. 
+				This creates sessions
+					despite basic HTTP being a state-less protocol. 
+				
+		HTTP flow
+			When a client wants to communicate with a server, 
+			either the final server or an intermediate proxy, it performs the following steps:
+
+			Open a TCP connection: 
+				The TCP connection is used to send 
+					a request, or 
+					several, and 
+					receive an answer. 
+				The client may 
+					open a new connection, 
+					reuse an existing connection, or open several TCP connections to the servers.
+			Send an HTTP message: HTTP messages (before HTTP/2) are human-readable. 
+			With HTTP/2, these simple messages are encapsulated in frames, 
+				making them impossible to read directly, 
+				but the principle remains the same. 
+		For example:
+			GET / HTTP/1.1
+			Host: developer.mozilla.org
+			Accept-Language: fr
+			Copy to Clipboard
+			Read the response sent by the server, such as:
+			HTTP/1.1 200 OK
+			Date: Sat, 09 Oct 2010 14:28:02 GMT
+			Server: Apache
+			Last-Modified: Tue, 01 Dec 2009 20:18:22 GMT
+			ETag: "51142bc1-7449-479b075b2891b"
+			Accept-Ranges: bytes
+			Content-Length: 29769
+			Content-Type: text/html
+
+			<!DOCTYPE html>… (here come the 29769 bytes of the requested web page)
+			Copy to Clipboard
+			Close or reuse the connection for further requests.
+			If HTTP pipelining is activated, several requests can be sent without waiting for the first response to be fully received. HTTP pipelining has proven difficult to implement in existing networks, where old pieces of software coexist with modern versions. HTTP pipelining has been superseded in HTTP/2 with more robust multiplexing requests within a frame.
+
+			HTTP Messages
+			HTTP messages, as defined in HTTP/1.1 and earlier, are human-readable. In HTTP/2, these messages are embedded into a binary structure, a frame, allowing optimizations like compression of headers and multiplexing. Even if only part of the original HTTP message is sent in this version of HTTP, the semantics of each message is unchanged and the client reconstitutes (virtually) the original HTTP/1.1 request. It is therefore useful to comprehend HTTP/2 messages in the HTTP/1.1 format.
+
+			There are two types of HTTP messages, requests and responses, each with its own format.
+
+	Message type:
+		GET, 
+		POST
+		PUT
+		DELETE
+
+More details: 
+	https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+---------------------------------------------------------------------------------------------------------
+Https
+
+What is HTTPS?
+Hypertext transfer protocol secure (HTTPS)
+	secure version of HTTP
+	HTTPS is encrypted 
+		secure data transfer. 
+	transmit sensitive data
+		logging into a 
+			bank account etc.
+
+In modern web browsers 
+	websites that do not use HTTPS are marked differently 
+	Look for a padlock in the URL bar to signify the webpage is secure. 
+	Web browsers take HTTPS seriously
+	
+	
+How HTTPS work?
+	HTTPS 
+		uses an encryption protocol 
+			to encrypt communications. 
+		The protocol is called Transport Layer Security (TLS)
+			formerly Secure Sockets Layer (SSL). 
+			asymmetric public key infrastructure. 
+		
+			uses two different keys to encrypt communications between two parties:
+
+	The private key - 
+		this key is controlled by the owner of a website 
+		kept private. 
+		key lives on a web server 
+		used to decrypt information encrypted by the public key.
+	The public key - 
+		this key is available to everyone 
+		Information that’s encrypted by the public key can only be decrypted by the private key.	
+
+
+How is HTTPS different from HTTP?
+	HTTPS 
+		not a separate protocol from HTTP. 
+		Uses TLS/SSL encryption over the HTTP protocol. 
+		HTTPS occurs based upon the transmission of TLS/SSL certificates
+			verify that a particular provider is who they say they are.
+	User connects to a webpage
+		server send SSL certificate 
+			contains the public key 
+		Client and the server
+			go through a process called 
+				SSL/TLS handshake
+				series of back-and-forth communications 
+				establish a secure connection. 
+			
+			
+Steps of a TLS handshake?
+	TLS handshakes 	
+		series of datagrams, or messages
+		exchanged by a client and a server. 
+		involves multiple steps
+
+	The exact steps within a TLS handshake 
+		will vary 
+			depending upon  
+				kind of key exchange algorithm used 
+				and the cipher suites supported by both sides. 
+			The RSA key exchange algorithm is used most often. It goes as follows:
+RSA key exchange algorithm (one of the option)
+	1. The 'client hello' message: 
+		The client initiates 
+			handshake by sending a "hello" message to the server. 
+		The message will include 
+			which TLS version the client supports
+			cipher suites supported, and 
+			string of random bytes known as the "client random."
+	2. The 'server hello' message: 
+		In reply to the client hello message
+		server sends a message containing 
+			server's SSL certificate
+			server's chosen cipher suite, and 
+			"server random," 
+				another random string of bytes that's generated by the server.
+	3. Authentication: 
+		The client verifies the server's SSL certificate with 
+			certificate authority that issued it. 
+				Confirms server is who it says it is
+				client is interacting with the actual owner of the domain.
+	The premaster secret: 
+		The client sends one more random string of bytes
+			the "premaster secret." 
+		The premaster secret is encrypted with the public key 
+		can only be decrypted with the private key by the server. 
+		
+	Private key used: 
+		The server decrypts the premaster secret.
+	Session keys created: 
+		Both client and server generate session keys from the 
+			client random
+			server random, and 
+			premaster secret. 
+		They should arrive at the same results.
+	Client is ready: 
+		The client sends a "finished" message 
+			encrypted with a session key.
+	Server is ready: 
+		The server sends a "finished" message 
+			encrypted with a session key.
+	Secure symmetric encryption achieved: 
+		The handshake is completed, and communication continues using the session keys.			
+---------------------------------------------------------------------------------------------------------
+SSH
+	https://www.ssh.com/academy/ssh/protocol
+	SSH Protocol – Secure Remote Login and File Transfer
+	
+The SSH protocol 
+	(also referred to as Secure Shell) 
+	method for secure remote login 
+		from one computer to another. 
+	Provides several alternative options for strong authentication
+	protects 
+		communications security and 
+		integrity 
+			with strong encryption. 
+	Secure alternative to 
+		non-protected login protocols 
+		(like telnet, rlogin) and 
+		insecure file transfer methods (such as FTP).
+		
+	
+SSH used in corporate networks for:
+	providing secure access for users and automated processes
+	interactive and automated file transfers
+	issuing remote commands
+	managing network infrastructure and other mission-critical system components.	
+
+
+How does the SSH protocol work
+	Works in the client-server model
+	Connection is established by the SSH client 
+		connecting to the SSH server. 
+	The SSH client drives the connection setup process 
+		uses public key cryptography to 
+		verify the identity of the SSH server. 
+		After the setup phase 
+			SSH protocol 
+				uses strong symmetric encryption and hashing algorithms 
+					to ensure the privacy and integrity of the data 
+					that is exchanged between the client and server.
+	Refer fig. in 	https://www.ssh.com/academy/ssh/protocol
+ 
+ 
+Strong authentication with SSH keys
+-----------------------------------
+Several options for user authentication. 
+Most common 
+	passwords (discouraged) and 
+	public key authentication.
+The public key authentication 
+	primarily used for automation 
+	sometimes by system administrators for single sign-on. 
+	widely used than anticipated. 
+	cryptographic key pair - 
+		public key and 
+		private key - 
+		configure the public key on a server 
+			authorize access to anyone who has a copy of the private key access to the server. 
+	The keys used for authentication are called SSH keys. 
+	Public key authentication 
+		also used with smartcards, 
+		such as 
+			CAC and 
+			PIV cards 
+				used by US government.
+	
+	Ensure proper 
+		policies, 
+		processes, and 
+		audits 
+			for SSH usage 
+	
+SSH provides strong encryption and integrity protection
+-------------------------------------------------------
+	Once a connection has been established between the SSH client and server
+		data that is transmitted is encrypted 
+			according to the parameters negotiated in the setup. 
+	During the negotiation the client and server 
+		agree on the symmetric encryption algorithm 
+			to be used and generate the encryption key 
+	The traffic between the communicating parties is protected 
+		industry standard strong encryption algorithms 
+			(such as AES (Advanced Encryption Standard)), and the 
+			SSH protocol also includes a mechanism that ensures the integrity of the transmitted data 
+				by using standard hash algorithms 
+				(such as SHA-2 (Standard Hashing Algorithm)). 
+
+---------------------------------------------------------------------------------------------------------
+RDP
+https://docs.microsoft.com/en-us/troubleshoot/windows-server/remote/understanding-remote-desktop-protocol
+
+RDP 
+	A multichannel capable protocol 
+	separate virtual channels for carrying the following information:
+		presentation data
+		serial device communication
+		licensing information
+		highly encrypted data
+			keyboard, 
+			mouse activity
+Several other capabilities are retained as part of the RDP, such as the architectural features necessary to support multipoint (multiparty sessions). 
+Multipoint data delivery 
+	data from an application 
+		to be delivered in real time to multiple parties
+			such as Virtual Whiteboards. 
+	It doesn't require to send the same data to each session individually.
+
+In this first release of Windows Terminal Server
+	provide reliable and fast point-to-point (single-session) communications. 
+	Only one data channel is used in the initial release of Terminal Server 4.0. 
+	However, the flexibility of RDP gives plenty of room for functionality in future products.
+
+One reason that Microsoft decided to implement RDP for connectivity purposes 
+	within Windows NT Terminal Server 
+		provides an extensible base to build many more capabilities. 
+		RDP provides 64,000 separate channels for data transmission. 
+		However, current transmission activities are only using a single channel (for keyboard, mouse, and presentation data).
+
+RDP 
+	designed to support many different types of Network topologies
+		such as 
+			ISDN, 
+			POTS. 
+	RDP is also designed to support many LAN protocols, 
+		such as 
+			IPX, 
+			NetBIOS, 
+			TCP/IP. 
+	The current version of RDP will only run over TCP/IP. 
+	With customer feedback, other protocol support may be added in future versions.
+
+The activity involved in sending and receiving data through the RDP stack is 
+	same as the seven-layer OSI model standards
+	for common LAN networking today. 
+	Data from an application or service to be transmitted is passed down through the protocol stacks. 
+	It's sectioned, directed to a channel (through MCS), encrypted, wrapped, framed, packaged onto the network protocol, 
+		and finally addressed and sent over the wire to the client. 
+	The returned data works the same way only in reverse. 
+	The packet is stripped of its address, then unwrapped, decrypted, and so on. 
+	Finally the data is presented to the application for use. 
+	Key portions of the protocol stack modifications occur between the fourth and seventh layers, where the data is:
+
+		encrypted
+		wrapped
+		framed
+		directed to a channel
+		prioritized
+One of the key points for application developers is that, in using RDP, Microsoft has abstracted away the complexities of dealing with the protocol stack. It allows them to write clean, well-designed, well-behaved 32-bit applications. Then the RDP stack implemented by the Terminal Server and its client connections takes care of the rest.
+
+For more information about how applications interact on the Terminal Server, and what to know when developing applications for a Windows Terminal Server infrastructure, see the following white paper:
+Optimizing Applications for Windows NT Server 4.0, Terminal Server Edition
+
+Four components worth discussing within the RDP stack instance are:
+
+the Multipoint Communication Service (MCSMUX)
+the Generic Conference Control (GCC)
+Wdtshare.sys
+Tdtcp.sys
+MCSmux and GCC are part of the International Telecommunication Union (ITU) T.120 family. The MCS is made up of two standards:
+
+T.122: It defines the multipoint services
+T.125: It specifies the data transmission protocol
+MCSMux controls:
+
+channel assignment by multiplexing data onto predefined virtual channels within the protocol
+priority levels
+segmentation of data being sent
+It essentially abstracts the multiple RDP stacks into a single entity, from the perspective of the GCC. GCC is responsible for management of those multiple channels. The GCC allows the creation and deletion of session connections and controls resources provided by MCS. Each Terminal Server protocol (currently, only RDP and Citrix's ICA are supported) will have a protocol stack instance loaded (a listener stack awaiting a connection request). The Terminal Server device driver coordinates and manages the RDP protocol activity. It's made up of smaller components:
+
+an RDP driver (Wdtshare.sys) for UI transfer, compression, encryption, framing, and so on.
+a transport driver (Tdtcp.sys) to package the protocol onto the underlying network protocol, TCP/IP.
+RDP was developed to be entirely independent of its underlying transport stack, in this case TCP/IP. It means that we can add other transport drivers for other network protocols as customers needs for them grow, with little or no significant changes to the foundational parts of the protocol. They're key elements to the performance and extendibility of RDP on the network.
+---------------------------------------------------------------------------------------------------------
+TCP 
+
+https://www.fortinet.com/resources/cyberglossary/tcp-ip
+
+What is TCP?
+	Transmission Control Protocol 
+		a communications standard 
+		enables application programs and computing devices to exchange messages over a network. 
+		define the rules of the internet 
+		included within the standards defined by the Internet Engineering Task Force (IETF). 
+		
+		Designed to send packets across the internet 
+		One of the most commonly used protocols in 
+			digital network communications and 
+			ensures end-to-end data delivery.
+
+	TCP organizes data 
+		to transmit between a server and a client. 
+	It guarantees the integrity of the data being communicated over a network. 
+	Before it transmits data, 
+		TCP establishes a connection between a source and its destination, 
+		which it ensures remains live until communication begins. 
+		It then breaks large amounts of data into smaller packets
+			while ensuring data integrity is in place throughout the process.
+
+	So high-level protocols that need to transmit data all use TCP Protocol.  
+		Examples include peer-to-peer sharing methods like 
+			File Transfer Protocol (FTP), 
+			Secure Shell (SSH), and 
+			Telnet. 
+		Also end and receive email through 
+			Internet Message Access Protocol (IMAP), 
+			Post Office Protocol (POP), 
+			Simple Mail Transfer Protocol (SMTP), 
+		for web access through the 
+			Hypertext Transfer Protocol (HTTP).
+
+	Alternative to TCP 
+		User Datagram Protocol (UDP)
+		establish low-latency connections 
+			between applications and decrease transmissions time. 
+		TCP can be an expensive network tool 
+			includes absent or corrupted packets and 
+			protects data delivery with controls like 
+				acknowledgments, 
+				connection startup, and 
+				flow control. 
+
+What is IP?
+	The Internet Protocol (IP) 
+		method for sending data from one device to another across the internet. 
+		Every device has an IP address 
+			uniquely identifies it 
+			enables it to communicate with 
+			exchange data with other devices connected to the internet.
+
+	Principal communications protocol 
+		responsible for the 
+			formats and 
+			rules for exchanging data and 
+			messages between computers on a single network or 
+			several internet-connected networks. 
+		It does this through the Internet Protocol Suite (TCP/IP), 
+			a group of communications protocols that are split into four abstraction layers.
+
+	IP is the main protocol within the internet layer of the TCP/IP. 
+	Its main purpose is to deliver data packets between the source application or device and the destination using 
+	methods and structures that place tags, such as address information, within data packets.
+
+TCP vs. IP: What is the Difference?
+-------------------------------------
+TCP and IP 
+	separate protocols 
+	work together 
+	ensure data is delivered to its intended destination 
+	IP obtains and defines the address—
+		the IP address—of the application or 
+		device the data must be sent to. 
+	TCP is then responsible for 
+		transporting and 
+		routing data 
+			through the network architecture and 
+			ensuring it gets delivered to 
+				destination application or 
+				device with IP. 
+
+IP address 
+	like phone number 
+	TCP is the computer networking version of the technology 
+		
+	The two protocols are frequently used together 
+	rely on each other for data to have a destination and safely reach it, 
+	which is why the process is regularly referred to as TCP/IP.
+
+How Does TCP/IP Work?
+The TCP/IP model 
+	default method of data communication on the Internet.  
+	It was developed by the United States Department of Defense to enable the accurate and correct transmission of data between devices. It breaks messages into packets to avoid having to resend the entire message in case it encounters a problem during transmission. Packets are automatically reassembled once they reach their destination. Every packet can take a different route between the source and the destination computer, depending on whether the original route used becomes congested or unavailable.
+
+TCP/IP divides communication tasks into layers that keep the process standardized, without hardware and software providers doing the management themselves. The data packets must pass through four layers before they are received by the destination device, then TCP/IP goes through the layers in reverse order to put the message back into its original format. 
+
+As a connection based protocol, the TCP establishes and maintains a connection between applications or devices until they finish exchanging data. It determines how the original message should be broken into packets, numbers and reassembles the packets, and sends them on to other devices on the network, such as routers, security gateways, and switches, then on to their destination. TCP also sends and receives packets from the network layer, handles the transmission of any dropped packets, manages flow control, and ensures all packets reach their destination.
+
+A good example of how this works in practice is when an email is sent using SMTP from an email server. To start the process, the TCP layer in the server divides the message into packets, numbers them, and forwards them to the IP layer, which then transports each packet to the destination email server. When packets arrive, they are handed back to the TCP layer to be reassembled into the original message format and handed back to the email server, which delivers the message to a user’s email inbox.
+
+TCP/IP uses a three-way handshake to establish a connection between a device and a server, which ensures multiple TCP socket connections can be transferred in both directions concurrently. Both the device and server must synchronize and acknowledge packets before communication begins, then they can negotiate, separate, and transfer TCP socket connections.
+
+The 4 Layers of the TCP/IP Model
+The TCP/IP model defines how devices should transmit data between them and enables communication over networks and large distances. The model represents how data is exchanged and organized over networks. It is split into four layers, which set the standards for data exchange and represent how data is handled and packaged when being delivered between applications, devices, and servers.
+
+The four layers of the TCP/IP model are as follows:
+
+Datalink layer: The datalink layer defines how data should be sent, handles the physical act of sending and receiving data, and is responsible for transmitting data between applications or devices on a network. This includes defining how data should be signaled by hardware and other transmission devices on a network, such as a computer’s device driver, an Ethernet cable, a network interface card (NIC), or a wireless network. It is also referred to as the link layer, network access layer, network interface layer, or physical layer and is the combination of the physical and data link layers of the Open Systems Interconnection (OSI) model, which standardizes communications functions on computing and telecommunications systems.
+Internet layer: The internet layer is responsible for sending packets from a network and controlling their movement across a network to ensure they reach their destination. It provides the functions and procedures for transferring data sequences between applications and devices across networks.
+Transport layer: The transport layer is responsible for providing a solid and reliable data connection between the original application or device and its intended destination. This is the level where data is divided into packets and numbered to create a sequence. The transport layer then determines how much data must be sent, where it should be sent to, and at what rate. It ensures that data packets are sent without errors and in sequence and obtains the acknowledgment that the destination device has received the data packets.
+Application layer: The application layer refers to programs that need TCP/IP to help them communicate with each other. This is the level that users typically interact with, such as email systems and messaging platforms. It combines the session, presentation, and application layers of the OSI model.
+---------------------------------------------------------------------------------------------------------
+################################################################################################
+
+	- Infrastructure as a Service details and use cases
+################################################################################################
+	- Software as a Service details and use cases
+################################################################################################
+	- Platform as a Service details and use cases."
+################################################################################################
+AWS training
+################################################################################################
+################################################################################################
+"Platform - Operating 
+################################################################################################
+Systems - Centos/Ubuntu & VirtualBox & Vagrant
+################################################################################################
+Platform - Cloud - AWS
+################################################################################################
+Platform - Containers - Docker"
+################################################################################################
+################################################################################################
+"Integration patterns - 
+################################################################################################
+	- Messaging and messaging systems - RabbitMQ, Kafka
+################################################################################################
+
+
+
+
+	- Caching - Redis\Memcached.
+	
+	Open source
+	in-memory data structure
+	no-sql db can be used as
+		cache
+		message broker
+	NoSQL key/value store
+	Support multiple data structures
+	Built in replication
+	
+	
+	Redis datatypes
+		String
+		List
+		Set
+		Sorted Sets
+		Hashes
+		Bitmaps
+		Hyperlogs
+		Geospatial indexes
+		
+	Adv. of Redis
+		Very flexible
+		No schemas and column names
+		Very fast: 
+			1,10,000 sets per sec.
+			81,000 gets per sec.
+		Rich datatype support
+		Caching and disk persistence
+	
+	Security	
+		Designed to be accessed by trusted clients
+		Don't allow exernal access/internet exposure
+		Simple auth. can be setup
+		Can be restricted to certain interfaces
+		Data encryption not supported.
+		
+		
+	
+
+Redis
+	https://www.digitalocean.com/community/tutorials/how-to-install-secure-redis-centos-7
+
+		redis-cli ping
+		redis-cli
+			PING
+			set key1 100
+			get key1
+			ECHO 'Hello World!!'
+			SET greeting 'Hello World!!'
+			get greeting
+			INCR key1
+			get key1
+			decr key1
+			get key1
+			exists key1
+			DEL key1
+			get key1
+			
+			
+			set mygreeting "Hello World!!"
+			get mygreeting
+			expire mygreeting 25 #expires in 25 sec
+			TLL mygreeting #how long it would still be active
+			get mygreeting #after expire time?
+
+
+
+	Install Redis in HA mode.
+		https://www.tecmint.com/setup-redis-replication-in-centos-8/
+		https://www.tecmint.com/setup-redis-high-availability-with-sentinel-in-centos-8/
+		
+################################################################################################
+	- Pub sub
+################################################################################################
+	- Strangler
+################################################################################################
+	- API Gateway"
+################################################################################################

@@ -1,0 +1,7 @@
+{
+  "bind_addr": "0.0.0.0",
+  "advertise_addr": "10.0.2.15",
+  "addresses": {
+    "http": "0.0.0.0"
+  }
+}
