@@ -393,7 +393,7 @@ https://github.com/hnasr/javascript_playground/blob/master/envoy/allbackend.yaml
 vi http.yaml - copy the content from above file.
 envoy --config-path http.yaml
 N.B: It doesn't accept .yml extension. It should be .yaml only.
-http://192.168.56.2:8080/
+http://<public ip address>:8080/
 
 
 Service Mesh
@@ -430,6 +430,19 @@ Telemetrics
 	(including wire-level like MongoDB, DynamoDB)
 Distributed Tracing
 Security (mTLS, policies)
+
+
+Istio was initially designed with multiple services
+	install each separately.
+From version 1.5 they are all grouped toghether
+
+	Control Plane: Istiod
+	Worker nodes: Envoy proxy
+	Istiod
+		Service discovery
+		Certficate 
+			Has a CA 
+		Configuration management
 
 
 
@@ -565,6 +578,7 @@ https://www.tutorialspoint.com/consul/consul_introduction.htm
 	
 --------------------------------------------------------------------------------
 Reference: https://www.youtube.com/watch?v=YqDZdPg3_tU
+https://learn.hashicorp.com/tutorials/consul/get-started-install
 Install consul based on documentation
 Install consul agent 
 
@@ -706,17 +720,17 @@ Hashicorp Vault
 			distribute 
 				secrets
 	
+		Secure critical application data
+		Encrypt Application data
+			with ease
 	
-	Encrypt Application data
-		with ease
-	
-	Identity based access
-		Authenticate to and 
-		access different 
-			cloud
-			systems
-			endpoints 
-				using trusted identities
+		Identity based access
+			Authenticate to and 
+			access different 
+				cloud
+				systems
+				endpoints 
+					using trusted identities
 
 	Usecase 1
 	---------
@@ -760,9 +774,7 @@ Hashicorp Vault
 				user/application.
 				
 	
-	Basic vault cli commands
-	
-	vault
+
 	https://github.com/b1tsized/vault-tutorial/tree/main/01-getting-started
 	https://servian.dev/get-started-with-hashicorp-vault-cc132dce627d
 https://www.digitalocean.com/community/tutorials/how-to-securely-manage-secrets-with-hashicorp-vault-on-ubuntu-20-04
@@ -784,11 +796,14 @@ Set environment variable: export VAULT_ADDR='http://172.17.0.2:8200'
 
 Install the client by following https://www.vaultproject.io/downloads
 
+	Basic vault cli commands
+	vault
+	
 Authenticate to server from CLI: vault login
 
-Write secret (CLI): vault kv put secret/tdc tdcpassword=test1234
+Write secret (CLI): vault kv put secret/mypwd mypassword=vilas1234
 
-Read secret (CLI): vault kv get secret/tdc 
+Read secret (CLI): vault kv get secret/mypwd 
 
 INFO
 vault info: https://vaultproject.io
@@ -917,8 +932,8 @@ Infrastructure Monitoring Tool 1 - Datadog
 	Infrastructure Monitoring
 	Introduced for infra monitoring
 		Can now
-			performance monitoring
-			log monitoring
+			APM: performance monitor
+			LOG: log monitoring
 			
 	SAAS
 		Software as  a service
@@ -942,18 +957,23 @@ Infrastructure Monitoring Tool 1 - Datadog
 
 		
 	Setup free tier Datadog
+		Integration - Agents
 		Agent
 			windows
 			linux
 			
 		get centos instance
-			according to the direction in free account
+			according to the direction in datadog free account
 				install datadog
 				
 		ps -eaf | grep data
+		executables /opt/datadog-agent/bin/
 		cat /etc/datadog-agent/datadog.yaml
 			wait for sometime.
 				check You have "1" 
+		
+		systemctl stop datadog-agent
+		systemctl start datadog-agent
 		
 
 
@@ -1139,7 +1159,7 @@ Log Monitoring Tool 2 - ELK stake
 			yum
 		Config file: /etc/filebeat/filebeat.yml
 		
-
+Follow this for hands on.
 justmeandopensource
 	https://github.com/justmeandopensource/elk/blob/master/INSTALL-ELK-6-CentOS7.md
 
@@ -1159,6 +1179,7 @@ justmeandopensource
 		
 		
 	after installing kibana
+	skip the nginx installation and do the below
 		vi /etc/kibana/kibana.yml
 			server.host: "0.0.0.0"
 			server.port: 5601
@@ -1166,7 +1187,21 @@ justmeandopensource
 		
 		
 		rpm -qc filebeat
+		vi filebeat.yaml
 		
+		enabled: true
+		path: 
+			- /var/log/messages
+			- /var/log/secure
+			
+			
+		comment output:elasticsearch
+			enable logstash output
+			hosts: ["<hostname:5044>"]
+			uncomment ssl.certificate_authorities: ["/etc/pki/tls/certs/logstash.crt"]
+		
+	systemctl restart filebeat	
+---------------------------------------------------------------		
 		vi /etc/
 			(a)	enabled: true
 			(b)	
@@ -1539,6 +1574,7 @@ Example use case
 			takes 2 hours to backup
 			
 			time between failures = 30 days
+				30 * 24* 60 
 			impact duration = 120 min.
 			affects 100% users
 			
@@ -1556,7 +1592,7 @@ Example use case
 	30 min. to resolve
 	affects 50 % of users
 	
-	30 min. to detect * 30 min. to resolve * 26 weeks/year * 50 % users
+	30 min. to detect * 30 min. to resolve * 26 weeks/year (happens every 2 weeks) * 50 % users
 	= 780 bad min./year
 	
 	likewise
@@ -2021,7 +2057,13 @@ Fault Tolerance - Fault Isolation Terms
 		the site should gracefully handle that failure 
 			by removing/replacing the functionality 
 			instead of taking the whole site down.
-	Swimlane is one of the commonly used fault isolation methodologies. Swimlane adds a barrier to the service from other services so that failure on either of them won’t affect the other. Say we roll out a new feature ‘Advertisement’ in our content sharing app. We can have two architectures Swimlane
+	Swimlane 
+		a commonly used fault isolation methodologies. 
+		Swimlane 
+			adds a barrier to the service 
+			from other services 
+			so that failure on either of them won’t affect the other. 
+		Say we roll out a new feature ‘Advertisement’ in our content sharing app. We can have two architectures Swimlane
 	If Ads are generated on the fly synchronously during each Newsfeed request, the faults in the Ads feature get propagated to the Newsfeed feature. Instead if we swimlane the “Generation of Ads” service and use a shared storage to populate Newsfeed App, Ads failures won’t cascade to Newsfeed, and worst case if Ads don’t meet SLA , we can have Newsfeed without Ads.
 	Let's take another example, we have come up with a new model for our Content sharing App. Here we roll out an enterprise content sharing App where enterprises pay for the service and the content should never be shared outside the enterprise.
 
@@ -2044,3 +2086,297 @@ Work with the partners and design interaction between services such that one ser
 ################################################################################################
 Training in relevant topics from areas like https://aws.amazon.com/builders-library/
 ################################################################################################
+Minimizing correlated failures in distributed systems
+	https://aws.amazon.com/builders-library/minimizing-correlated-failures-in-distributed-systems/?did=ba_card&trk=ba_card
+Monolith typical architecture	
+	
+SOA architecture
+
+Achieving fault tolerance
+	Early days
+		ran on multiple physical servers 
+			behind a load balancer 
+			distributed incoming requests among those servers. 
+		To deal with server failures, 
+			the load balancer sent a periodic health check 
+				(typically a small HTTP request to a well-known URL) to each server. 
+		Servers failed to respond 
+			several times in a row
+			load balancer take server out 
+		More details: https://aws.amazon.com/builders-library/implementing-health-checks/
+		
+		To avoid the load balancer itself becoming a single point of failure
+			two load balancers were arranged 
+				primary and 
+				secondary pair
+		domain name system (DNS) 
+			used to fail over to the secondary 
+			if the primary failed. 
+			multiple IP's (IP pool) attached to single dns. 
+			If one fails, automatically attempt other
+		If the system needed persistent storage
+			similar technique was used 
+			pair of replicated relational databases
+			with an active primary and a standby secondary. 
+		
+
+
+The problem with correlated failures
+	Above HA is fine with until correlated failures
+		if the failures are uncorrelated
+		if individual failures are always independent. 
+	Unfortunately
+		in the real world 
+		A single underlying cause can trigger multiple failures. 
+		for e.g. a bulb getting fused every day at your home.
+
+	Generally correlated failure occur 
+		when multiple independent components fail due to the same underlying cause. 
+	causes can vary in complexity
+		can be hard to predict. 
+		(there is also cascading failure
+			relatively easy to diagnose and fix.
+	
+
+	Risks of correlated failures 
+		can exist in distributed systems as well
+	destroy availability gains 
+		from redundancy. 
+	e.g. issues with 
+		data center power, 
+		network, and 
+		cooling. 
+	With very little
+		dedicated engineering work and 
+		careful attention, 
+			common infrastructure dependencies 
+				like DNS can cause correlated failures 
+	Popular joke among infrastructure engineers: 
+		“It wasn’t DNS. 
+		It definitely wasn’t DNS! . . . It was DNS.”
+
+	A batch of hardware components could have the same latent manufacturing defect
+		or a single operator action could have an impact on multiple servers. 
+		As hardware components age, 
+			failure probabilities increase 
+			making it more likely that multiple servers will fail at the same time. 
+	These factors work against the distributed system, 
+		increasing the probability of multiple simultaneous failures, 
+		and thus reducing the effectiveness of redundancy in our architectures.
+
+Using Regions and Availability Zones
+	At Amazon
+		reducing such risks 
+			organize infrastructure into 
+				multiple Regions and 
+				Availability Zones. 
+	Each Region is designed to be isolated 
+		from all the other Regions
+		it consists of multiple Availability Zones. 
+	Each Availability Zone 
+		1 or more discrete data centers 
+		have redundant 
+			power, 
+			network, and 
+			connectivity, and are 
+			physically separated 
+				by a meaningful distance from other Availability Zones. 
+	Infrastructure services like 
+		Amazon Elastic Compute Cloud (EC2), 
+		Amazon Elastic Block Store (EBS), 
+		Elastic Load Balancing (ELB), and 
+		Amazon Virtual Private Cloud (VPC) 
+			run independent stacks in each Availability Zone 
+				share little to nothing with other Availability Zones. 
+	Any change brings with it a risk of failure
+
+	Separation of infrastructure into 
+		independent Availability Zones 
+		allows service teams to architect and deploy 
+			their services in a way that 
+				reduces the risk that a single infrastructure failure 
+					will have an impact on the majority of their fleet. 
+
+	Availability Zones 
+		very powerful at reducing the risk of correlated infrastructure failures
+			
+	These days, AWS customers and internal service teams alike use Availability Zones to build highly available applications 
+		on top of EC2. 
+	
+Noninfrastructure causes of correlated failures
+	Physical infrastructure not the only factor causing correlated failures. 
+	Any action performed by an 
+		operator or 
+		any tool 
+			can act on multiple servers 
+		at the same time 
+			has the potential to introduce correlated failure modes into the system. 
+	Early 
+		it was common to execute a command 
+		on all the servers in parallel—
+			for example to grep for a specific log line, 
+			or to adjust some operating system parameter. 
+	These days we learned 
+		such actions and 
+		using such tools 
+			can introduce correlated failure modes 
+			into the system. 
+	Anything goes wrong, 
+		it will impact every server at the same time.
+
+	While using such operational tools and practices, 
+		we always make sure to introduce 
+			velocity controls and 
+			feedback loops. 
+	In unlikely event 
+		it will only impact a small percentage of the servers. 
+	Don’t stop there. 
+	Operational tools and practices 
+		take Availability Zones into account. 
+	Such operational tools 
+		not directly related to the underlying infrastructure boundaries, 
+		Our services are architected to 
+			withstand an Availability Zone failure, 
+			thus giving our teams a well understood and 
+			practiced fault boundary. 
+	For example, 
+		a system responsible for automatically patching our servers 
+			has both built-in velocity controls and 
+			fail-safe mechanisms, 
+		And never operates on servers from multiple Availability Zones at the same time.
+
+	Don’t stop at Availability Zones. 
+	At AWS, 
+		a common practice 
+			services adopt cellular architectures. 
+	Instead of operating a single stack per Availability Zone or Region 
+		we subdivide a service 
+			into a set of identical and independent partitions 
+				called cells. 
+		Among other benefits, 
+			cells allow us to limit the impact of unforeseen problems or failures. 
+	For services that adopt cellular architectures, 
+		operational tooling and practices 
+			take cells into account and 
+			avoid touching multiple cells at the same time.
+
+Reducing correlated behaviors
+	Inspite of all these
+	Most distributed systems 
+		still have one important correlating factor—
+			each server in the system runs the same exact software. 
+	
+	The premise of the game was that you controlled a group of adorable little creatures called lemmings, 
+		who were traversing a landscape filled with obstacles and deadly traps. 
+	The catch was that lemmings lacked free will, so each lemming moved in a predictable algorithmic path. 
+	When faced with an obstacle, a lemming would turn around. 
+	When faced with a cliff or a trap, a lemming would mindlessly walk straight ahead. 
+	And because every lemming followed the same algorithm, if one lemming perished, so did the rest of them. 
+	As a player, you had to use the features of the terrain, and a small number of tools, to safely guide the group to the exit.
+
+	Although most distributed systems run software that is significantly more sophisticated than the AI in control of a lemming, they can still suffer a similar fate. For most distributed systems, every server in the fleet runs the same exact software, with the same limits and failure modes. Load balancers and other work distribution mechanisms tend to do a really good job of evenly distributing the load across all the servers, which is exactly what we want them to do. However, when a software bug or a load-related failure causes one of the servers in such distributed system to fail, the same cause can also impact the rest of the fleet at the same time.
+
+	Early in my career, one common example of such a failure was running out of open file descriptors. In many operating systems, a file descriptor is a data structure that represents an open file or a network socket. There is usually a limit on how many such file descriptors any single process can open at a time. If the limit is exceeded it can cause the application to fail in unpredictable ways. If incoming load caused the software running on one of the servers to run out of open file descriptors and fail, an evenly distributed load would frequently cause the other servers to experience the same fate.
+
+	These days, applications are not likely to run out of open file descriptors. Thanks to many hard-won lessons, and the ample memory present in modern servers, most systems default to a high enough file descriptor limit to make running out impractical. Still, other limits, behaviors, and even bugs can exist, and they can introduce correlated failure modes into the system. Where possible, one powerful approach to minimizing risk of correlated failures that we like to use is shuffle sharding, a workload isolation technique that makes sure no two servers in the fleet see the same exact workload. That way, if anything about its workload causes a server to fail, it is unlikely to impact all the servers in the fleet. To learn more, go to the Amazon Builders’ Library article Colm MàcCarthaigh wrote about shuffle sharding: Workload isolation using shuffle-sharding.
+
+	Correlated behaviors can be another challenge for redundant systems. This reminds me of another experience I had at home: Several months ago, I was working from home and my home internet service provider (ISP) suffered an outage in my neighborhood. I had several important meetings to attend. Luckily, I had a cellular service from a different provider and was able to quickly set up a Wi-Fi hotspot on my cellphone and tether it to my laptop. To my surprise, the cellular service began experiencing a slowdown as well. I later found out that many of my neighbors, who were also working from home (if you are reading this article at a later date, this was during the time of COVID-19, where many people in North America worked from home), had the same idea, and the cellular network in our neighborhood simply wasn’t ready to handle all that additional load. In this situation, the correlated behavior of the larger system (ISP customers failing over at the same time) caused a failure in the second, completely unrelated, system (the cellular network).
+
+	Similar risks exist in distributed systems as well, where it’s possible to end up in a situation where a large number of clients change their behavior at the same time, creating a highly-correlated spike in load. Changing human behavior is really hard. However, changing the behavior of computers is easier. Where possible, one technique we like to use at Amazon is introducing jitter, which is adding a small amount of randomness to common behaviors and limits. Our teams are on the lookout for parts of their system that can result in a highly correlated behavior, and they use jitter to reduce such risks. Here are just a few examples of using jitter to reduce risks of correlated behaviors:
+	Varying the frequency at which each server runs housekeeping jobs.
+	Adding a small amount of randomness to the delay before a failed API is retried. To learn more about this, go to Marc Brooker’s Amazon Builders’ Library article on adding jitter to retries: Timeouts, retries, and backoff with jitter.
+	If the system contains mode shifts (e.g., refreshing its state from a remote data store), varying the thresholds at which such mode shifts occur.
+	Varying expiration times of short-term credentials and secrets.
+	Varying cache time to live (TTL) across servers.
+	Where applicable, adding a small amount of variability to the various resource limits, such as Java virtual machine (JVM) heap and connection pool sizes.
+	I want to note that one challenge with using jitter is that it can make debugging the overall system more challenging. If the behavior of the application varies across servers and time, bugs and other failures can become harder to reproduce. We found that one approach to manage that downside is to seed the random function that is used to add jitter with a well-known parameter, like the name or IP address of the server. That way, each server will always use consistent and predictable values for its jitter, yet be different from any other server in the fleet.
+
+Conclusion
+Redundancy has been instrumental in helping us build highly available systems, even while using relatively inexpensive hardware components. By architecting our systems to run on multiple servers, we can make sure the system remains available even if some of those servers fail. However, both known and hidden factors can introduce risks of correlated failures, which eat away at the benefits of redundancy in the distributed systems. Some examples of factors that could cause correlated failures are:
+
+
+
+Infrastructure components like power, cooling, and network.
+Common dependencies like DNS.
+Operator actions that touch every server.
+Every server in the fleet having identical behavior and resource limits.
+At Amazon, we look at ways to reduce such risks. Availability Zones are one such powerful mechanism. By organizing infrastructure into independent locations that share as little as possible with each other we give our own teams and customers a powerful tool to improve availability of their services. Beyond that, our service teams look for techniques like shuffle sharding and jitter to reduce the risk of a single software problem impacting all the servers in the fleet.
+
+
+
+Computers: They do exactly as you tell them
+Now, unlike making coffee by hand, one of the great things about computers is that everything is very repeatable, and you don’t have to trade away quality for scale. Teach a computer how to perform something once, and it can do it again and again. Each time is exactly the same. There’s still craft and a human touch, but the quality goes into how you teach computers to do things. If you skillfully teach it all of the parameters it needs to make a great cup of coffee, a computer will do it millions of times over.
+
+Still, doing something millions of times takes more time than doing something thousands or hundreds of times. Ask a computer to add two plus two a million times. It’ll get four every time, but it will take longer than if you only asked it to do it once. When we’re operating highly reliable systems, variability is our biggest challenge. This is never truer than when we handle increases in load, state changes like reconfigurations, or when we respond to failures, like a power or network outage. Times of high stress on a system, with a lot of changes, are the worst times for things to get slower. Getting slower means queues get longer, just like they do in a barista-powered café. However, unlike a queue in a café, these system queues can set off a spiral of doom. As the system gets slower, clients retry, which makes the system slower still. This feeds itself.
+
+Marc Brooker and David Yanacek have written in the Amazon Builders’ Library about how to get timeouts and retries right to avoid this kind of storm. However, even when you get all of that right, slowdowns are still bad. Delay when responding to failures and faults means downtime.
+
+This is why many of our most reliable systems use very simple, very dumb, very reliable constant work patterns. Just like coffee urns. These patterns have three key features. One, they don’t scale up or slow down with load or stress. Two, they don’t have modes, which means they do the same operations in all conditions. Three, if they have any variation, it’s to do less work in times of stress so they can perform better when you need them most. There’s that anti-fragility again.
+
+Whenever I mention anti-fragility, someone reminds me that another example of an anti-fragile pattern is a cache. Caches improve response times, and they tend to improve those response times even better under load. But most caches have modes. So, when a cache is empty, response times get much worse, and that can make the system unstable. Worse still, when a cache is rendered ineffective by too much load, it can cause a cascading failure where the source it was caching for now falls over from too much direct load. Caches appear to be anti-fragile at first, but most amplify fragility when over-stressed. Because this article isn’t focused on caches, I won’t say more here. However, if you want to learn more using caches, Matt Brinkley and Jas Chhabra have written in detail about what it takes to build a truly anti-fragile cache.
+
+This article also isn’t just about how to serve coffee at scale, it’s about how we’ve applied constant work patterns at Amazon. I’m going to discuss two examples. Each example is simplified and abstracted a little from the real-world implementation, mainly to avoid getting into some mechanisms and proprietary technology that powers other features. Think of these examples as a distillation of the important aspects of the constant work approach.
+Amazon Route 53 health checks and healthiness
+It’s hard to think of a more critical function than health checks. If an instance, server, or Availability Zone loses power or networking, health checks notice and ensure that requests and traffic are directed elsewhere. Health checks are integrated into the Amazon Route 53 DNS service, into Elastic Load Balancing load balancers, and other services. Here we cover how the Route 53 health checks work. They’re the most critical of all. If DNS isn’t sending traffic to healthy endpoints, there’s no other opportunity to recover.
+
+From a customer’s perspective, Route 53 health checks work by associating a DNS name with two or more answers (like the IP addresses for a service’s endpoints). The answers might be weighted, or they might be in a primary and secondary configuration, where one answer takes precedence as long as it’s healthy. The health of an endpoint is determined by associating each potential answer with a health check. Health checks are created by configuring a target, usually the same IP address that’s in the answer, such as a port, a protocol, timeouts, and so on. If you use Elastic Load Balancing, Amazon Relational Database Service, or any number of other AWS services that use Route 53 for high availability and failover, those services configure all of this in Route 53 on your behalf.
+
+Route 53 has a fleet of health checkers, broadly distributed across many AWS Regions. There’s a lot of redundancy. Every few seconds, tens of health checkers send requests to their targets and check the results. These health-check results are then sent to a smaller fleet of aggregators. It’s at this point that some smart logic about health-check sensitivity is applied. Just because one of the ten in the latest round of health checks failed doesn’t mean the target is unhealthy. Health checks can be subject to noise. The aggregators apply some conditioning. For example, we might only consider a target unhealthy if at least three individual health checks have failed. Customers can configure these options too, so the aggregators apply whatever logic a customer has configured for each of their targets.
+
+So far, everything we’ve described lends itself to constant work. It doesn’t matter if the targets are healthy or unhealthy, the health checkers and aggregators do the same work every time. Of course, customers might configure new health checks, against new targets, and each one adds slightly to the work that the health checkers and aggregators are doing. But we don’t need to worry about that as much.
+
+One reason why we don’t worry about these new customer configurations is that our health checkers and aggregators use a cellular design. We’ve tested how many health checks each cell can sustain, and we always know where each health checking cell is relative to that limit. If the system starts approaching those limits, we add another health checking cell or aggregator cell, whichever is needed.
+
+The next reason not to worry might be the best trick in this whole article. Even when there are only a few health checks active, the health checkers send a set of results to the aggregators that is sized to the maximum. For example, if only 10 health checks are configured on a particular health checker, it’s still constantly sending out a set of (for example) 10,000 results, if that’s how many health checks it could ultimately support. The other 9,990 entries are dummies. However, this ensures that the network load, as well as the work the aggregators are doing, won’t increase as customers configure more health checks. That’s a significant source of variance … gone.
+
+What’s most important is that even if a very large number of targets start failing their health checks all at once—say, for example, as the result of an Availability Zone losing power—it won’t make any difference to the health checkers or aggregators. They do what they were already doing. In fact, the overall system might do a little less work. That’s because some of the redundant health checkers might themselves be in the impacted Availability Zone.
+
+So far so good. Route 53 can check the health of targets and aggregate those health check results using a constant work pattern. But that’s not very useful on its own. We need to do something with those health check results. This is where things get interesting. It would be very natural to take our health check results and to turn them into DNS changes. We could compare the latest health check status to the previous one. If a status turns unhealthy, we’d create an API request to remove any associated answers from DNS. If a status turns healthy, we’d add it back. Or to avoid adding and removing records, we could support some kind of “is active” flag that could be set or unset on demand.
+
+If you think of Route 53 as a sort of database, this appears to make sense, but that would be a mistake. First, a single health check might be associated with many DNS answers. The same IP address might appear many times for different DNS names. When a health check fails, making a change might mean updating one record, or hundreds. Next, in the unlikely event that an Availability Zone loses power, tens of thousands of health checks might start failing, all at the same time. There could be millions of DNS changes to make. That would take a while, and it’s not a good way to respond to an event like a loss of power.
+
+The Route 53 design is different. Every few seconds, the health check aggregators send a fixed-size table of health check statuses to the Route 53 DNS servers. When the DNS servers receive it, they store the table in memory, pretty much as-is. That’s a constant work pattern. Every few seconds, receive a table, store it in memory. Why does Route 53 push the data to the DNS servers, rather than pull from them? That’s because there are more DNS severs than there are health check aggregators. If you want to learn more about these design choices, check out Joe Magerramov’s article on putting the smaller service in control.
+
+Next, when a Route 53 DNS server gets a DNS query, it looks up all of the potential answers for a name. Then, at query time, it cross-references these answers with the relevant health check statuses from the in-memory table. If a potential answer’s status is healthy, that answer is eligible for selection. What’s more, even if the first answer it tried is healthy and eligible, the server checks the other potential answers anyway. This approach ensures that even if a status changes, the DNS server is still performing the same work that it was before. There’s no increase in scan or retrieval time.
+
+I like to think that the DNS servers simply don’t care how many health checks are healthy or unhealthy, or how many suddenly change status, the code performs the very same actions. There’s no new mode of operation here. We didn’t make a large set of changes, nor did we pull a lever that activated some kind of “Availability Zone unreachable” mode. The only difference is the answers that Route 53 chooses as results. The same memory is accessed and the same amount of computer time is spent. That makes the process extremely reliable.
+Amazon S3 as a configuration loop
+Another application that demands extreme reliability is the configuration of foundational components from AWS, such as Network Load Balancers. When a customer makes a change to their Network Load Balancer, such as adding a new instance or container as a target, it is often critical and urgent. The customer might be experiencing a flash crowd and needs to add capacity quickly. Under the hood, Network Load Balancers run on AWS Hyperplane, an internal service that is embedded in the Amazon Elastic Compute Cloud (EC2) network. AWS Hyperplane could handle configuration changes by using a workflow. So, whenever a customer makes a change, the change is turned into an event and inserted into a workflow that pushes that change out to all of the AWS Hyperplane nodes that need it. They can then ingest the change.
+
+The problem with this approach is that when there are a large number of changes all at once, the system will very likely slow down. More changes mean more work. When systems slow down, customers naturally resort to trying again, which slows the system down even further. That isn’t what we want.
+
+The solution is surprisingly simple. Rather than generate events, AWS Hyperplane integrates customer changes into a configuration file that’s stored in Amazon S3. This happens right when the customer makes the change. Then, rather than respond to a workflow, AWS Hyperplane nodes fetch this configuration from Amazon S3 every few seconds. The AWS Hyperplane nodes then process and load this configuration file. This happens even if nothing has changed. Even if the configuration is completely identical to what it was the last time, the nodes process and load the latest copy anyway. Effectively, the system is always processing and loading the maximum number of configuration changes. Whether one load balancer changed or hundreds, it behaves the same.
+
+You can probably see this coming now, but the configuration is also sized to its maximum size right from the beginning. Even when we activate a new Region and there are only a handful of Network Load Balancers active, the configuration file is still as big as it will ever be. There are dummy configuration “slots” waiting to be filled with customer configuration. However, as far the workings of AWS Hyperplane are concerned, the configuration slots there nonetheless.
+
+Because AWS Hyperplane is a highly redundant system, there is anti-fragility in this design. If AWS Hyperplane nodes are lost, the amount of work in the system goes down, not up. There are fewer requests to Amazon S3, instead of more attempts in a workflow.
+
+Besides being simple and robust, this approach is very cost effective. Storing a file in Amazon S3 and fetching it over and over again in a loop, even from hundreds of machines, costs far less than the engineering time and opportunity cost spent building something more complex.
+Constant work and self-healing
+There’s another interesting property of these constant-work designs that I haven’t mentioned yet. The designs tend to be naturally self-healing and will automatically correct for a variety of problems without intervention. For example, let’s say a configuration file was somehow corrupted while being applied. Perhaps it was mistakenly truncated by a network problem. This problem will be corrected by the next pass. Or say a DNS server missed an update entirely. It will get the next update, without building up any kind of backlog. Since a constant work system is constantly starting from a clean slate, it’s always operating in “repair everything” mode.
+
+In contrast, a workflow type system is usually edge-triggered, which means that changes in configuration or state are what kick off the occurrence of workflow actions. These changes first have to be detected, and then actions often have to occur in a perfect sequence to work. The system needs complex logic to handle cases where some actions don’t succeed or need to be repaired because of transient corruption. The system is also prone to the build-up of backlogs. In other words, workflows aren’t naturally self-healing, you have to make them self-healing.
+Design and manageability
+I wrote about big-O notation earlier, and how constant work systems are usually notated as O(1). Something important to remember is that O(1) doesn’t mean that a process or algorithm only uses one operation. It means that it uses a constant number of operations regardless of the size of the input. The notation should really be O(C). Both our Network Load Balancer configuration system, and our Route 53 health check system are actually doing many thousands of operations for every “tick” or “cycle” that they iterate. But those operations don’t change because the health check statuses did, or because of customer configurations. That’s the point. They’re like coffee urns, which hold hundreds of cups of coffee at a time no matter how many customers are looking for a cup.
+
+In the physical world, constant work patterns usually come at the cost of waste. If you brew a whole coffee urn but only get a handful of coffee drinkers, you’re going to be pouring coffee down the drain. You lose the energy it took to heat the coffee urn, the energy it took to sanitize and transport the water, and the coffee grounds. Now for coffee, those costs turn out to be small and very acceptable for a café or a caterer. There may even be more waste brewing one cup at a time because some economies of scale are lost.
+
+For most configuration systems, or a propagation system like our health checks, this issue doesn’t arise. The difference in energy cost between propagating one health check result and propagating 10,000 health check results is negligible. Because a constant work pattern doesn’t need separate retries and state machines, it can even save energy in comparison to a design that uses a workflow.
+
+At the same time, there are cases where the constant work pattern doesn’t fit quite as well. If you’re running a large website that requires 100 web servers at peak, you could choose to always run 100 web servers. This certainly reduces a source of variance in the system, and is in the spirit of the constant work design pattern, but it’s also wasteful. For web servers, scaling elastically can be a better fit because the savings are large. It’s not unusual to require half as many web servers off peak time as during the peak. Because that scaling happens day in and day out, the overall system can still experience the dynamism regularly enough to shake out problems. The savings can be enjoyed by the customer and the planet.
+The value of a simple design
+I’ve used the word “simple” several times in this article. The designs I’ve covered, including coffee urns, don’t have a lot of moving parts. That’s a kind of simplicity, but it’s not what I mean. Counting moving parts can be deceptive. A unicycle has fewer moving parts than a bicycle, but it’s much harder to ride. That’s not simpler. A good design has to handle many stresses and faults, and over enough time “survival of the fittest” tends to eliminate designs that have too many or too few moving parts or are not practical.
+
+When I say a simple design, I mean a design that is easy to understand, use, and operate. If a design makes sense to a team that had nothing to do with its inception, that’s a good sign. At AWS, we’ve re-used the constant work design pattern many times. You might be surprised how many configuration systems can be as simple as “apply a full configuration each time in a loop.”
+
+
+
+
+
+
+
+The ops win
+The retrospective
+ops meeting 
+investment in agility
+architectural choice
