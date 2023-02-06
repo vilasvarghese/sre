@@ -8,15 +8,18 @@ def create_ec2_instance():
     InstanceType="t2.micro", # Change it as per your need, But use the Free tier one
     KeyName="ec2-key" # Change it to the name of the key you have.
     :return: Creates the EC2 instance.
+    
+    Amazon ami: ami-05bfbece1ed5beb54
+    Centos ami: ami-05a36e1502605b4aa
     """
     try:
         print ("Creating EC2 instance")
         resource_ec2 = boto3.client("ec2")
         resource_ec2.run_instances(
-            ImageId="ami-05bfbece1ed5beb54",
+            ImageId="ami-05a36e1502605b4aa",
             MinCount=1,
             MaxCount=1,
-            InstanceType="t2.micro",
+            InstanceType="t3a.medium",
             KeyName="vilas"
         )
     except Exception as e:
