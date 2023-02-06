@@ -36,8 +36,8 @@ public class HelloServlet extends HttpServlet {
     static {
         // Your accesskey and secretkey
         AWS_CREDENTIALS = new BasicAWSCredentials(
-                "AKIAT4L7NELAMCKMACGQ",
-                "ViYOjIz2biT9z/OYh7z9RdZT/P6QzigjongbxFF9"
+                "Change me",
+                "Change me"
         );
 	
 	}
