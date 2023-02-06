@@ -1377,6 +1377,7 @@ Site Reliability Engineering
 	Google view
 		
 		SRE
+		Defn. of Devops
 		1. Reduce organization silos
 			SRE takes ownership of production
 			Define common 
@@ -1406,18 +1407,110 @@ Site Reliability Engineering
 	
 	SRE
 		Define availability
-		Level of availability
+			ability of a 
+				system or service 
+				to perform its intended function 
+				at a specified point in time. 
+			Expressed as a percentage 
+			(%)amount of time that the 
+				system is operational and responsive to user requests, 
+				compared to 
+					total time that it could potentially be operational. 
+			availability	= 
+				total time a service is up and running / total time that has elapsed. 
+
+			High availability systems 
+				designed to minimize downtime 
+				provide consistent and reliable service to users. 
+		Level (Measure) of availability
+			% of time service is operational and responsive to user requests
+			expressed as a percentage. 
+			Theoretically "The level of availability" 
+				0% - 100% 
+			Common levels of availability for systems include:
+				99.999% (five 9s): 
+					average of 5.26 minutes of downtime per year.
+				99.99% (four 9s): 
+					52.56 minutes of downtime per year.
+				99.9% (three 9s): 
+					8 hours and 45 minutes of downtime per year.
+			The desired level of availability 
+				depends on the specific requirements and 
+				priorities of the system or service, 
+				specified as a Service Level Objective (SLO) in SRE.
 		Plan in case of failure
-		
+			SRE teams 
+				prioritize and plan for failures 
+					to manage risk.
+
+			This typically involves, including:
+
+			Failure mode analysis: 
+				Identify how system can fail 
+					impact of those failures on users.
+
+			Mitigation strategies: 
+				Develop strategies to prevent failures 
+					from 
+						occurring or 
+						reducing the impact of failures. 
+					May use 
+						redundancy, 
+						auto-scaling, and 
+						real-time monitoring.
+
+			Incident response planning: 
+				Creating and practicing an incident response plan that outlines the steps to be taken in the event of a failure. This includes assigning roles and responsibilities, defining communication channels, and establishing a clear process for restoring service.
+
+			Chaos engineering: 
+				Proactively testing the system to identify and resolve potential failures before they occur in production.
+
+			By planning for failures, SRE teams can minimize the impact of failures on users and restore service as quickly as possible. This helps to ensure the reliability and availability of the system over the long term.
 		
 	SLI (Service Level indicators)
 		for a particular time.
-		
-		Request Latency
-		Batch throughput
-		Failures per request
-		
-		watched closely by SRE
+		e.g.
+			Request Latency
+				Request latency 
+					time it takes for 
+						request to be processed and a response to be received. 
+					measure of the delay experienced by a user 
+						when making a request to a system or network. 
+					can be affected by various factors like 
+						network speed, 
+						server load, and 
+						distance between the client and server. 
+					latency should be min.
+			Batch throughput
+				number of processing units 
+					(e.g. records, transactions, items) 
+					that a system can handle in a batch 
+					or set of batches over a specific period of time. 
+				measure of efficiency of the system to process
+					batch jobs
+				important metric to 
+					monitor and optimize in many industries, like 
+						finance, 
+						retail, and 
+						logistics, 
+				High batch throughput 
+					can reduce processing time and 
+					increase system efficiency.
+			Failures per request
+				number of unsuccessful requests made to a system 
+				usually percentage 
+				failure/total number of requests. 
+				measure of the reliability 
+				can indicate the presence of issues like 
+					system downtime, 
+					errors, or 
+					limitations 
+						in capacity. 
+				High failure rates may indicate a need for 
+					additional resources, 
+					improvements in software or hardware, or 
+					changes in system configuration.
+		SLI: watched closely by SRE
 			on daily basis
 	e.g. 
 		a. 99th percentile latency of requests 

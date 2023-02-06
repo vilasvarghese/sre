@@ -1,0 +1,177 @@
+DAY 1:
+Use Case / Application Overview
+	• Using AWS APIs, 
+		the application will provision EC2 and S3 resources; 
+		simulates infrastructure management through software
+---------------------------------------------------------------------------------------------------
+
+	Install 
+		python 
+		boto3 
+		aws cli
+		
+		aws configure
+		aws configure list
+		
+	
+
+---------------------------------------------------------------------------------------------------	
+
+SRE Big Picture
+	• Define reliability by embracing risk
+---------------------------------------------------------------------------------------------------
+	To build reliable systems
+		accept all systems have risks
+	don't try to eliminate all risks
+	Instead manage and mitigate the impact of those risks. 
+	So make deliberate trade-offs between 
+		risk and 
+		availability
+	Prioritize actions to 
+		improve reliability 
+			based on the potential impact of a failure. 
+	By embracing risk, 
+		SRE teams can create more resilient systems 
+			prepared to handle unexpected events and 
+			minimize downtime.
+---------------------------------------------------------------------------------------------------	
+	• Measure reliability through SLIs, SLOs, and error budget
+---------------------------------------------------------------------------------------------------
+	Reliability in SRE is measured through 
+		Service Level Indicators (SLIs), 
+		Service Level Objectives (SLOs), and 
+		error budgets.
+
+	-----------------------------------------------------------------------------------------------
+						Refer Note2.txt
+	-----------------------------------------------------------------------------------------------
+	Service Level Indicators (SLIs) 
+		metrics that reflect the quality of a service as 
+			experienced by its users, 
+		e.g. 
+			response time, 
+			availability, and 
+			error rate.
+
+	Service Level Objectives (SLOs) 
+		target values for SLIs, 
+		representing the desired level of service for users. 
+		These objectives should be based on realistic expectations for the service and the user's needs.
+
+	Error budgets 
+		financial metaphor 
+		allocates a budget for 
+			errors or 
+			downtime 
+				to a service 
+				over a set period of time
+		for e.g., 
+			99.99% availability over a quarter. 
+			The error budget 
+				amount of downtime acceptable for the service
+				and provides a framework for making decisions about 
+				changes to the service that may impact reliability.
+
+	By combining 
+		SLIs, SLOs, and error budgets, 
+		SRE teams can objectively measure and 
+		manage the reliability of their systems, and 
+		ensure that users receive the desired level of service.
+
+---------------------------------------------------------------------------------------------------	
+	• Lab Activity: Define SLx
+---------------------------------------------------------------------------------------------------
+	Refer Note2.txt
+---------------------------------------------------------------------------------------------------	
+	• Lab Activity: Build Error Budget Policy
+---------------------------------------------------------------------------------------------------
+An Error Budget Policy is a set of guidelines that define the acceptable level of errors or failures in a system. It is used to balance the trade-off between delivering new features and maintaining system reliability. Here are the steps to build an Error Budget Policy:
+
+Define the scope: Determine what services or systems the policy will cover, and what types of errors or failures will be included.
+
+Set the target reliability: Determine the desired level of reliability for the system, which will serve as the target for the error budget.
+
+Calculate the error budget: Based on the target reliability and the expected traffic to the system, calculate the allowable number of errors per time period (e.g. per day, week, or month).
+
+Define the response plan: Establish a plan for how the team will respond when the error budget is exceeded. This may include reducing feature development, pausing releases, or allocating additional resources to resolve the issue.
+
+Monitor and adjust the error budget: Regularly monitor the error rate and adjust the error budget as needed. This may involve revising the target reliability, changing the response plan, or allocating additional resources to resolve issues.
+
+Communicate the policy: Ensure that all stakeholders are aware of the error budget policy and understand the consequences of exceeding the error budget.
+
+Review and update the policy: Regularly review the error budget policy and update it as necessary to reflect changes in the system and to ensure that it remains relevant and effective.
+
+
+
+---------------------------------------------------------------------------------------------------	
+	• Monitor reliability through Prometheus & Grafana
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Build Queries Using PromQL in Prometheus
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Build Dashboards in Grafana
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Trigger Alerts Based on Error Budget
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Build full-stack observability
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Instrument Prometheus Exporters
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Generate Logs, Traces, Metrics
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+
+DAY 2:
+SRE Big Picture (cont’d...)
+	• Automate toil through infrastructure engineering
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Identify Toil
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Prioritize & Attack Toil
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Optimize incident management
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Distinguish Signal vs Noise
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Develop Runbook
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Optimize Alerts
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Build emergency response plan
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Break Things!
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Optimize Runbook
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Lab Activity: Build a Plan
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+Presentation
+	• Which operational aspects of the application (use case) were improved by SRE
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• What is the anatomy of an SRE’s typical day
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+	• Next steps
+	---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+Audience
+	• IT System Administrators
+	• Technology Practitioners in IT Infrastructure Management
