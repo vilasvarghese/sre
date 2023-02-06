@@ -1537,7 +1537,7 @@ The 95th percentile and 99th percentile values
 			teams slow down
 		lower SLO
 			quality can be compromised
-		wathed between SRE and product
+		watched between SRE and product
 			on monthly/quaterly/annual
 		
 	SLA (Servie Level Agreement)

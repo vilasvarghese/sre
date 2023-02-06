@@ -62,16 +62,15 @@ public class HelloServlet extends HttpServlet {
                 .build();
          
         // Launch an Amazon EC2 Instance
-        RunInstancesRequest runInstancesRequest = new RunInstancesRequest().withImageId("ami-0080e4c5bc078760e")
+        RunInstancesRequest runInstancesRequest = new RunInstancesRequest().withImageId("ami-05bfbece1ed5beb54")
                 .withInstanceType("t2.micro") // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html
                 .withMinCount(1)
                 .withMaxCount(1)
-                .withKeyName("priyajdm")
+                .withKeyName("vilas")
                 .withNetworkInterfaces(new InstanceNetworkInterfaceSpecification()
                         .withAssociatePublicIpAddress(true)
                         .withDeviceIndex(0)
-                        .withSubnetId("subnet-id")
-                        .withGroups("sg-id"));
+                        .withSubnetId("subnet-286f7340"));
  
         RunInstancesResult runInstancesResult = ec2Client.runInstances(runInstancesRequest);
  
