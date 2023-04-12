@@ -1,0 +1,587 @@
+eks CLUSTER
+
+	eksctl create cluster --name=eksnilay --region=us-east-1 --zones=us-east-1a,us-east-1b --without-nodegroup 
+
+	eksctl create nodegroup --cluster=eksnilay --region=us-east-1 --name=eksnilay-ng-public1 --node-type=t2.2xlarge --nodes=2 --nodes-min=2 --nodes-max=4 --node-volume-size=40 --ssh-access --ssh-public-key=vilasvirginia --managed --asg-access --external-dns-access --full-ecr-access --appmesh-access --alb-ingress-access --spot
+
+	eksctl delete nodegroup --cluster eksdemo --region us-east-1 --name eksdemo1-ng-public1
+AKIAT4L7NELAEELSFCUQ
+
+
+	eksctl create cluster --name=eks-spot-managed-node-groups --instance-types=m5.xlarge,m5a.xlarge,m5d.xlarge --managed --nodes=2 --asg-access --nodegroup-name on-demand-4vcpu-16gb
+
+	create an ec2 instance
+		install kubectl 
+		https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+		mkdir -p .local/bin
+		cp kubectl .local/bin/
+		kubectl get nodes
+		
+	access instance
+		aws eks update-kubeconfig --region region-code --name 
+	
+	
+	install git
+
+	git clone https://github.com/elastic/helm-charts
+
+	install helm
+	https://helm.sh/docs/intro/install/
+	curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+	chmod 700 get_helm.sh
+	./get_helm.sh
+	
+	Follow
+	https://github.com/elastic/helm-charts/
+	
+		elastic 
+			git clone https://github.com/elastic/helm-charts/
+			
+			helm repo add elastic https://helm.elastic.co
+			helm repo update
+				
+			
+			1. Watch all cluster members come up.
+			  $ kubectl get pods --namespace=default -l app=elasticsearch-master -w
+			2. Retrieve elastic user's password.
+			  $ kubectl get secrets --namespace=default elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+			3. Test cluster health using Helm test.
+			  $ helm --namespace=default test elasticsearch
+	
+		kibana
+			helm install kibana elastic/kibana
+			
+			1. Watch all containers come up.
+			  $ kubectl get pods --namespace=default -l release=kibana -w
+			2. Retrieve the elastic user's password.
+			  $ kubectl get secrets --namespace=default elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+			3. (from gitbash) Retrieve the kibana service account token.
+			  $ kubectl get secrets --namespace=default kibana-kibana-es-token -ojsonpath='{.data.token}' | base64 -d
+		
+		Open port 5601/Nodeport for that
+		kubectl edit svc kibana-kibana
+			Change ClusterIP to Nodeport
+		curl -I -k -u elastic:$password https://<ip>:5601/app/kibana
+		curl -I -k -u elastic:AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS1raWJhbmE6SUtUelNOVEdUc2FRT1dNbWktMTJNZw http://3.91.240.252:<nodeport>/app/kibana
+
+
+			
+		
+	
+	if you want to customize number of instances
+		helm show values elastic/elasticsearch >> elasticsearch.values
+		helm install elasticsearch elastic/elasticsearch -f elasticsearch.values
+		
+		or use
+		
+		helm install elasticsearch elasticsearch/ --set replicas=1
+		helm install kibana kibana/ --set replicas=1
+		helm install logstash logstash/ --set replicas=1
+		kubectl get all
+	
+		or 
+	media.sundog-soft.com/es8/install.txt
+
+
+
+elastic
+kubectl get secrets -o=name | grep elasticsearch
+kubectl get secret <$elastic-credentials> -o jsonpath='{.data.password}' | base64 --decode
+or 
+ kubectl get secret elasticsearch-master-credentials -o go-template='{{.data.password | base64decode}}'
+ curl -I -k -u elastic:$password http://localhost:5601/app/kibana
+curl -I -k -u elastic:$password http://publicip:<nodeport:31001>/app/kibana
+-----------------------
+Login to kibana
+---------------
+
+If you have installed an ELK (Elasticsearch, Logstash, Kibana) stack using Helm, you can obtain the login credentials for Kibana using the following steps:
+
+First, make sure that you have the kubectl command-line tool installed on your system, and you have connected it to the Kubernetes cluster where the ELK stack is installed.
+
+Run the following command to get the Kibana pod name:
+
+
+
+kubectl get pods -n <namespace> -l app=kibana -o=jsonpath='{.items[0].metadata.name}'
+Replace <namespace> with the namespace where you have installed the ELK stack.
+
+Run the following command to get the password for the elastic user:
+
+kubectl get secret <kibana-pod-name>-es-elastic-user -n <namespace> -o=jsonpath='{.data.elastic}' | base64 --decode
+
+What worked?
+ kubectl get secret elasticsearch-master-credentials -o go-template='{{.data.password | base64decode}}'
+
+Replace <kibana-pod-name> with the name of the Kibana pod that you obtained in step 2, and <namespace> with the namespace where you have installed the ELK stack.
+
+Once you have the password, you can access Kibana by opening a web browser and navigating to http://<kibana-service>:5601, where <kibana-service> is the name of the Kibana service in the Kubernetes cluster.
+
+When prompted for credentials, enter elastic as the username and the password that you obtained in step 3.
+
+You should now have access to Kibana and be able to start exploring your data.
+
+
+
+-------------
+UI	
+	Observability -> logs
+	
+
+kubectl cluster-info
+	points to the api server in eks
+
+
+Create index
+	Discover
+		Create data view
+			Create index pattern
+				filebeat-*
+					timestamp
+				
+	go back to logs
+		kubernetes.pod.name: logstash*
+		
+	deploy demo applications
+		kubectl apply -f D:\PraiseTheLord\HSBGInfotech\Others\vilas\docker-k8s\yaml\springboot-mongo\app.yml
+		
+	logs
+		kubernetes.pod.name: logstash*
+		
+		kubernetes.pod.name: * springboot
+		kubernetes.container.name: spring*
+	
+		"Total Users"
+		"Nginx"
+	Settings
+		Add "Kubernetes.pod.name" and "kubernetes.node.name" 
+
+
+https://github.com/guessi/eks-tutorials
+	cd D:\PraiseTheLord\HSBGInfotech\Others\elk\eks-tutorials\examples\simple
+	kubectl apply -f .
+	kubectl get pods,deployments,hpa,service,ingress
+
+----------------------------------------
+    Check for any errors in the Ingress logs: 
+		Use the Kibana console to search for logs related to your Ingress. Look for any errors or warnings that might indicate the issue.
+
+    Review the Kubernetes events: Use the Kubernetes CLI to view the events related to your Ingress. This can help you identify any issues with the Ingress configuration or any other related components.
+
+    Check for network issues: Use the ELK stack to view the network connections between the Ingress and other components. This can help you identify any issues with the network connections.
+
+    Review the Ingress configuration: Verify the Ingress configuration to ensure that it is correctly configured. Ensure that the Ingress is pointing to the correct backend services and that the appropriate rules and annotations are applied.
+
+    Check for any alerts: ELK may have already alerted you to the issue. Check the Kibana console for any relevant alerts related to your Kubernetes cluster or Ingress.
+
+    Review the ELK topology: Use the Kibana console to search for your Kubernetes cluster. Check if all the components are being detected by ELK, including the Ingress.
+
+----------------------------------------
+
+
+
+
+-----------------------------
+https://logz.io/learn/complete-guide-elk-stack/#elasticsearch
+
+ELK
+elk + eks
+
+----------------------------
+Lab 1: Follow this.
+----------------------------
+
+	
+-------------------------
+kubectl apply -f https://raw.githubusercontent.com/MithunTechnologiesDevOps/Kubernates-Manifests/master/SpringBoot-Mongo-DynamicPV.yml
+
+
+kubectl delete -f https://raw.githubusercontent.com/MithunTechnologiesDevOps/Kubernates-Manifests/master/SpringBoot-Mongo-DynamicPV.yml
+
+
+curl http://elasticip:9200/
+
+Kibana + menu + Dev tools
+	GET _cluster/health
+	
+	GET _nodes/stats
+	PUT favorite_candy
+	
+	
+	
+	login to kibana 
+		click logs
+		
+		create index.
+			click discover
+			
+
+	Precision = True Positives / (True Positives + False positives)
+						(both returned by search query)
+							False positives: incorrect returned 
+							True Positives: correct returned.
+						
+	Recall = True Positives / (True Positives + False negatives)
+							(What ideally should have returned)
+							False negatives: incorrect not returned - ideally should have returned.
+							
+					scoring algorithm
+					
+							
+	
+			
+https://github.com/LisaHJung/Beginners-Crash-Course-to-Elastic-Stack-Series-Table-of-Contents			
+
+
+https://github.com/LisaHJung/Part-2-Understanding-the-relevance-of-your-search-with-Elasticsearch-and-Kibana-/blob/main/README.md
+https://github.com/LisaHJung/Part-3-Running-full-text-queries-and-combined-queries-with-Elasticsearch-and-Kibana
+
+
+
+
+
+
+---------------------------------------------------
+	What is Elastic Stack
+		Elasticsearch
+		Logstash
+		Kibana
+		Beats
+		
+		
+
+
+---------------------------------------------------
+elk stack
+https://blog.knoldus.com/how-to-deploy-elk-stack-on-kubernetes/
+	
+	run query and generate alerts
+		https://www.youtube.com/watch?v=Qvzmb_0aOnc
+		https://www.youtube.com/watch?v=M6i_GEpdvOU
+		teams
+			using tulio
+		emails
+		planning to pagerduty
+	SNS
+	SES
+	Cloudwatch 
+dynatrace
+	https://www.youtube.com/watch?v=VYmnbY8yIps&list=PLDhScTEBdP8zm9_OhILOdE0bvE_SlCXA1
+	alerts
+		dev. configures
+	grafana
+orchestrated on k8s
+	lambda
+	front end s3
+
+
+
+--------------------------------------------------------------------------------------------------------
+			DYNATRACE
+--------------------------------------------------------------------------------------------------------
+List of Black box monitoring tools
+1. Nagios
+2. Datadog
+3. Sysdig
+4. Dynatrace
+
+Monitoring includes
+	Sense/Measure
+		|
+	Colletion
+	Analsys/Computation
+	Alerting/Escalation
+	Visualization
+	
+	
+System Vs Causes
+What Vs Why
+Http 500 error 	Vs Db down 
+
+Four golden signals of monitoring
+	Monitor
+		1. Latency
+		2. Traffic
+		3. Saturation
+		4. Errors
+		
+	Observability
+		Logging
+		Monitoring
+		Tracing
+		Visualization
+		
+	Metrics
+		Work Metrics
+			throughput
+			success
+			error 
+			performance
+			
+		Resouce Metrics
+			Utilization
+			Saturation
+			Errors
+			Availability
+			
+	Events
+	Logs Vs Traces
+		35:40
+	Traces
+		Special form of logging
+		Low level infor
+		Event reproduction
+		[Usually] not human readable
+		
+	
+--------------------------------------------------------------------------------------------------------
+
+https://www.dynatrace.com/support/help/setup-and-configuration/setup-on-container-platforms/kubernetes/get-started-with-kubernetes-monitoring
+
+https://www.dynatrace.com/support/help/setup-and-configuration/setup-on-container-platforms/kubernetes/get-started-with-kubernetes-monitoring#expand--instructions-for-automated-mode--2
+
+
+kubectl create ns dynatrace
+
+kubectl -n dynatrace create secret generic dynakube --from-literal="<>"
+kubectl apply -f https://github.com/dynatrace/Dynatrace-operator/release/download/v0.9.0/kubernetes.yaml
+
+
+
+
+kubectl create namespace dynatrace
+kubectl apply -f https://github.com/Dynatrace/dynatrace-operator/releases/download/v0.10.4/kubernetes.yaml
+kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook --timeout=300s
+
+Open dynakube.yaml
+	crete a secret with api token from dynakube.yaml
+	kubectl -n dynatrace create secret generic dynakube --from-literal=apiToken="ZHQwYzAxLkFUUElTU0NVN0M1WFVESlgzUUVJR0hJVi43WldISlpIQ0JYNk5OQ1NXNE5UUzM2TElMNVdFV0NLQ1NJWFdQQVJTRjZVT0VFQ1cyRkYyVE5RVE41S1FVUEU0"
+
+kubectl apply -f dynakube.yaml
+
+
+dt0c01.UEZ6J2E35XUNO7MCNT7EVXTI.UQA5GUXPNIUN4MHFY3LPFSBHENBHYWKDK64IYJUJZBP7J2ISGQOP5B37IVTZQ3CU
+
+dt0c01.CYEONTN2RPR4KGQKZMFPNIBV.JZLU2WJBEYDTOXBJASAQE5QBPFJBLNUE7NUUQOWQONYDK4FEZGSOVEVXVJA6G3FF
+
+kubectl get pod -n dynatrace
+
+search for below in UI
+	kubernetes 
+	hosts
+	
+	
+	kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://my-cluster-ip; done"
+	
+	
+	Checking Problems in Dynatrace
+	-------------------------------
+	https://www.youtube.com/watch?v=KNedsCKRblM
+	
+	Attach
+		Infrastructure - Kubernetes (as mentioned above)
+		Settings - Cloud and Virtualization - AWS
+	
+
+	
+		After sometime
+		Settings - "Monitored Technologies"
+			add CoreDNS localhost:9153
+			MongoDB
+			
+		Dashboard reports working
+		-------------------------
+			OneAgent Traces - Adaptive traffic management
+			Kubernetes cluster overview
+
+			Create ns quota
+				https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+				wait for sometime
+				
+				
+			After sometime
+				Metric & Dimension Usage + Rejections
+				Real User Monitoring
+				Kubernetes workload overview
+		
+		Observe and Explore
+			Observe and explore
+				Data explorer
+					Kubernetes namespaces 
+				Metrics
+		Infrastructure
+			Kubernetes
+			AWS
+			Containers
+			Docker
+			Hosts
+			Technolgoies and proceses
+			Hosts Networking
+		Cloud Automation
+			Releases
+				what are they?
+			SLO
+				https://www.youtube.com/watch?v=MORoTepOQQk
+				Demo Mode
+				SLA 
+					always expressed in %
+					successful transaction( or event)/total number of transaction or event
+				
+				Search for service 
+					spring-boot-app-1
+						note customer id from url (....A39)
+					Modify Filter-> Entity Selector and click "Preview"
+						type("SERVICE"),entityName("spring-boot-app-1")	
+						confirm Entity Id is correct.
+							should match with what you saw on url earlier
+							
+					(100)*(builtin:service.errors.server.successCount:splitBy())/(builtin:service.requestCount.server:splitBy())		
+					
+	
+	alert profiling
+	---------------
+	do both
+	https://www.youtube.com/watch?v=qNQ_p4jrz3A
+	https://www.youtube.com/watch?v=eWCuPlnb5Pc
+		Manage - alerts - settings
+		configure alert (left pane)
+			alert alerting profile
+				name
+					save changes
+				define rules
+					availability
+					monitoring 
+					error alerts 
+
+					Choose rules
+		Manage			
+			Integrations
+				alert 
+				select the alert profile 
+			
+			"Test Notification" 
+			
+			
+		sudo shutdown the machine	
+	
+
+	TBD: 
+		SLO
+		Alerting/Escalation
+			https://www.youtube.com/watch?v=32kUxY3nMoE&list=PL3mGAAf6tenXRB4vPjw_QjGhxYwO6MXgc
+			https://www.youtube.com/watch?v=JQBMLaEKjo8
+
+			Different types of slo
+				service level
+				single request
+				response time level
+				synthetic slo
+				synthetic steps slo
+				Real time user slo
+				Infrastructure level slo
+
+		
+		Virus scanning
+		
+https://dynatrace.awsworkshop.io/30_lab_1/10_labsetup.html
+https://github.com/dt-alliances-workshops/aws-modernization-dt-orders-setup
+./provision-workshop.sh https://smp82525.live.dynatrace.com/  dt0c01.VMGA3ZITOXJBYNPK4TZAMECG.STX2DVLFN3YYGYXRPBI35SYHNJPQUK7IZQ2FC3R3YGI7XUENVSUNHKY3JOC335SH
+
+
+/*{
+  "metadata": {
+    "configurationVersions": [
+      6
+    ],
+    "clusterVersion": "1.263.115.20230329-073241"
+  },
+  "id": "d199ac16-848b-42c3-a6a0-0d29df1e8a6a",
+  "dashboardMetadata": {
+    "name": "Cloud Migration Success",
+    "shared": false,
+    "owner": "2021mt93730@wilp.bits-pilani.ac.in",
+    "hasConsistentColors": false
+  },
+  "tiles": []
+}*/
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+To get a Dynatrace API token, you can follow these steps:
+
+    Log in to your Dynatrace account.
+
+    Click on the user menu in the top right corner of the screen and select "Settings".
+
+    In the "Settings" menu, select "Integration" and then click on "Dynatrace API".
+
+    Click on the "Generate token" button to create a new API token.
+
+    Enter a name for the token and select the appropriate access level. You can choose between "Read" and "Write" access, depending on the permissions required by your API calls.
+
+    Once you have entered the token name and access level, click on "Generate" to create the API token.
+
+    Copy the generated token and save it securely, as you will not be able to access it again after you leave this page.
+-------------------------------------------------------------------------------	
+	
+	
+	What is Dynatrace Hub?
+		The Dynatrace Software Intelligence Hub helps enterprises easily apply AI to all technologies and data sources and unlock automation at scale. Explore and access 500+ automatically and natively supported technologies. Extend the open enterprise-grade platform to cover specific technologies and use cases
+	
+------------------------------------------------------------------------------------------------	
+	how to do vulnerability analytics from dynatrace
+	------------------------------------------------
+	Dynatrace provides several features and capabilities for vulnerability analytics, which can help you identify and prioritize security vulnerabilities within your applications and infrastructure. Here's a general overview of the steps involved:
+
+    Configure security monitoring: First, you need to enable security monitoring in Dynatrace. This involves configuring the Security Gateway, which collects security-related data from your hosts and services.
+
+    Identify vulnerable components: Once security monitoring is enabled, Dynatrace will automatically detect vulnerable components in your environment. These may include outdated software versions, misconfigured systems, or other potential security risks.
+
+    Prioritize vulnerabilities: Dynatrace assigns a severity score to each vulnerability based on its potential impact on your environment. You can use this score to prioritize which vulnerabilities to address first.
+
+    Investigate vulnerabilities: Dynatrace provides detailed information about each vulnerability, including the affected components and potential remediation steps. You can use this information to investigate the vulnerability further and determine the best course of action.
+
+    Remediate vulnerabilities: Finally, you need to remediate the vulnerabilities by applying patches, updating software versions, or taking other corrective actions.
+------------------------------------------------------------------------------------------------
+	
+
+
+	
+------------------------------------------------------------------------------------------------	
+	Cloud Foudry
+	------------
+------------------------------------------------------------------------------------------------	
+		
+	how to create problem
+	
+------------------------------------------------
+------------------------------------------------------------------------------------------------	
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------	
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------	
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------	
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------	
+	
+	4 ebs volumes
+	
