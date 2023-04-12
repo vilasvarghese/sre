@@ -1,0 +1,627 @@
+* Dashboards
+
+	o How to create dashboard
+	o Share Dashboard
+
+* Dynatrace Reports
+	o Service Quality Reports
+	o Availability Report
+
+* Problems Analysis
+
+	o Root cause Analysis
+	o Visual Resolution Path
+
+* Host Monitoring
+
+    o Windows Server Monitoring
+    o Linux Server Monitoring
+
+* Dynatrace AWS Integration
+
+
+
+
+
+------------------------------------------------------
+
+Dynatrace overview
+------------------
+
+https://www.devopsschool.com/blog/how-to-enable-log-monitoring-in-dynatrace/
+https://www.youtube.com/watch?v=H-YSrX7X5xw
+
+Dynatrace 
+	Application Performance Monitoring tool (APM)
+	software intelligence platform 
+	comprehensive monitoring and analytics 
+		for 
+			cloud-native applications
+			microservices
+			hybrid clouds
+	end-to-end visibility 
+		into the entire application stack
+			user experience
+			application performance
+			infrastructure, and 
+			business metrics.
+
+Dynatrace 
+	uses artificial intelligence (AI) and 
+	machine learning (ML) algorithms 
+		to automatically 
+			detect and diagnose issues 
+				across complex, distributed environments
+		enabling organizations to identify and resolve problems faster and more efficiently.
+
+The platform offers a wide range of capabilities, including:
+
+    Real-time monitoring of 
+		application performance
+		infrastructure
+		user experience
+    Automatic discovery and mapping 
+		of application dependencies and topology
+    Root cause analysis and problem resolution
+    Intelligent automation and orchestration
+    Cloud optimization and cost control
+    Business analytics and metrics
+
+
+
+Architecture 
+https://www.dynatrace.com/support/help/managed-cluster/basic-concepts/managed-deployment-scenarios
+hsbginfotech/devops/dynatrace/
+
+RUM: Realtime user management
+
+-----------------------------------------------------------------------------------
+
+Tools of Dynatrace
+
+Below are the tools of Dynatrace:
+1. Dynatrace
+
+	managed in cloud in a SaaS platform. 
+	Monitoring tool
+		has all the logs 
+		helps in monitoring 
+			by checking all the history of logs in the system. 
+	It troubleshoots 
+		find  
+			errors or byte code information 
+	data is fetched and 
+		shown in the 
+			cloud platform or 
+			the dashboard 
+				so that any updates can be known easily and the errors are traced.
+
+2. AIOps
+	Artificial Intelligence for Operations 
+		help user know the operations better and monitor data. 
+	knows when to pitch in 
+		during monitoring the data. 
+	
+	Techniques and algorithms used are purely in AI format. 
+		like monitoring by humans 
+
+3. Digital Experience Management
+	know how the customer is being treated 
+		by any application 
+		how the customer feels about it. 
+	Traditional method of survey
+		not needed 
+	DEM takes data from 
+		site traffic
+
+
+Applications of Dynatrace & Sensors
+
+Below are the applications of Dynatrace and Sensors:
+
+Dynatrace:
+	Not only working of the application 
+	performance details from scratch 
+	The performance metrics offered in real-time
+	problems are detected automatically 
+	Diagnose the problems with proper solutions.
+    
+	
+	Monitoring 
+		done in the level of infrastructure and cloud. 
+		Users need not worry about the applications when Dynatrace is used in the system. The applications’ working is autodetected, and all the transactions are monitored at any level to provide proper dependency in the system.
+    AI is used for making the applications available always, and all the transactions are optimized so that any issues can be resolved using real-time data in the system. A single transaction is not left without a trace. With all the technologies in hand, greater productivity and efficiency is achieved in the system.
+    As a user of the Dynatrace product, I could say that the tool’s security is priceless. External tools or applications will not work without the permission of Dynatrace, and they make sure the systems and their applications are protected from any external environment.
+
+Sensors:
+
+    Any applications with user-defined methods use method sensors in the application. These sensors are easy to trace and provide proper guidance to Dynatrace. It is important to know the sensor mechanism in the tool to know its working.
+    Also, this helps in the memory of the application’s storage and logs. As sensors can sense any transactions being happening in the application, the logs are saved, and the tool is notified regarding the same.
+    Auto sensors detect anything being done and also informs the tool automatically. This is a great help when the monitoring happens. Tracing of the applications and the external tools invading the system is known and stopped so that the security of the system is not compromised at all.
+    Dynatrace has the capability to activate and deactivate the sensors based on their needs. This happens mainly with bytecode sensors as they are not needed always. The rules can be customized so that those sensors to be activated or deactivated can be understood easily. High priority sensors are listed at the top so that they are activated whenever in need.
+
+
+-----------------------------------------------------------------------------------
+Dynatrace offers three different monitoring approaches: OneAgent, agentless monitoring, and synthetic monitoring. Here's a brief overview of the differences between these approaches:
+
+    OneAgent: 
+		OneAgent is an agent-based approach to monitoring. It is a lightweight software agent that is installed on the host machine or container, and it collects data on application and infrastructure performance. OneAgent can monitor a wide range of metrics, including code-level performance, database queries, network performance, and more.
+
+    Agentless monitoring: 
+		Agentless monitoring is a non-intrusive approach to monitoring. It uses protocols like SNMP or JMX to remotely monitor infrastructure and application performance. This approach does not require installation of an agent and is ideal for monitoring devices that do not allow agent installation or have strict security policies.
+
+    Synthetic monitoring: 
+		Synthetic monitoring is a way to simulate user interactions with an application or service to monitor its performance. Synthetic monitoring is typically used to test the availability, functionality, and performance of web applications. Synthetic monitors are configured to mimic the behavior of real users and can be scheduled to run at regular intervals.
+
+
+
+
+		Synthetic monitoring is a type of monitoring in Dynatrace that allows you to simulate user interactions with your web applications to test their performance and availability. With synthetic monitoring, you can create automated tests that mimic real user behavior, such as clicking on links, filling out forms, and navigating through different pages of the application.
+
+		Here are some of the key features of synthetic monitoring in Dynatrace:
+
+			Automated testing: Synthetic monitors can be configured to run at regular intervals to test the availability, functionality, and performance of your web applications.
+
+			Realistic user behavior: Synthetic monitors are designed to mimic the behavior of real users, so you can get a realistic view of application performance.
+
+			Multi-step transactions: Synthetic monitors can be configured to perform multi-step transactions, such as logging in, adding items to a shopping cart, and checking out.
+
+			Customizable test scenarios: Synthetic monitors can be customized to test specific scenarios or user flows within your application.
+
+			Detailed performance metrics: Synthetic monitors provide detailed performance metrics, such as response time, error rate, and availability, so you can identify performance bottlenecks and resolve issues.
+-----------------------------------------------------------------------------------
+* Dashboards
+
+The Dynatrace dashboard provides a high-level view of the performance and health of your application environment. It offers a customizable, real-time view of all your monitored components, including applications, services, hosts, and infrastructure. Here are some of the key features and capabilities of the Dynatrace dashboard:
+
+    Visualization: The dashboard offers a range of visualization options, including graphs, charts, and tables, to help you quickly and easily understand the performance of your applications and infrastructure.
+
+    Real-time monitoring: The dashboard provides real-time monitoring of all your applications and infrastructure, allowing you to quickly identify and troubleshoot issues as they arise.
+
+    Customization: The dashboard is highly customizable, allowing you to configure it to display the information that is most important to you and your team.
+
+    Alerting: The dashboard supports alerting, allowing you to set up notifications for critical events and issues.
+
+    User experience: The dashboard provides a user-friendly experience, with an intuitive interface that makes it easy to navigate and find the information you need.
+
+    Integration: The dashboard can be integrated with a range of third-party tools and services, allowing you to extend its functionality and integrate it into your existing workflows.
+
+
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+	o How to create dashboard
+		-----------------------------------------------------------------------------------
+		To create a dashboard in Dynatrace, follow these steps:
+
+		Log in to your Dynatrace account.
+
+		Click on the "Dashboards" menu item in the left-hand navigation.
+
+		Click on the "Create Dashboard" button in the upper-right corner.
+
+		Give your dashboard a name and select the type of dashboard you want to create (e.g. custom dashboard, application dashboard, etc.).
+
+		Choose the metrics and data sources you want to include in your dashboard. You can select from a range of pre-built dashboards and widgets or create your own custom widgets using the "Custom Chart" option.
+
+		Customize the layout of your dashboard by adding, removing, or rearranging widgets as needed. You can also adjust the size and position of each widget to optimize the layout of your dashboard.
+
+		Save your dashboard by clicking the "Save" button in the upper-right corner.
+
+		Share your dashboard with other users or teams by clicking the "Share" button and selecting the users or groups you want to share it with.
+
+			Finally, set up alerts and notifications for your dashboard by clicking the "Alerts" button and configuring the alerting rules and conditions as needed.
+
+		Once you've created your dashboard, you can continue to customize and refine it over time to better suit your monitoring and reporting needs. Dynatrace also provides a range of best practices and resources to help you get the most out of your dashboards, including webinars, training courses, and a dedicated support team.
+		-----------------------------------------------------------------------------------
+	o Share Dashboard
+		-----------------------------------------------------------------------------------
+		To share a dashboard in Dynatrace, follow these steps:
+
+    Navigate to the dashboard you want to share.
+
+    Click on the "Share" button in the upper-right corner of the dashboard.
+
+    In the "Share dashboard" dialog box, select the users or groups you want to share the dashboard with. You can also choose to set up specific permissions for each user or group, such as read-only access or full editing capabilities.
+
+    If you want to include a message with the dashboard sharing invitation, you can enter it in the "Message" field.
+
+    Click on the "Send" button to send the dashboard sharing invitation to the selected users or groups.
+
+	Once you've shared your dashboard, the users or groups you've invited will receive an email notification with a link to the dashboard. They can then access and view the dashboard in their own Dynatrace account, based on the permissions you've granted.
+
+	Note that if you need to revoke access to a shared dashboard at any point, you can do so by navigating back to the "Share" dialog box and removing the relevant users or groups from the list of authorized viewers or editors.
+
+	-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+* Dynatrace Reports
+-----------------------------------------------------------------------------------
+	Dynatrace provides a range of reporting options to help you analyze and share data from your monitored environment. Here are some of the key reporting features and capabilities:
+
+    Pre-built reports: Dynatrace offers a range of pre-built reports covering various aspects of your application environment, including application health, infrastructure utilization, and user experience.
+
+    Custom reports: You can also create custom reports in Dynatrace by selecting the data sources and metrics you want to include, and then configuring the layout and formatting of the report.
+
+    Scheduled reports: Dynatrace allows you to schedule reports to be automatically generated and sent to specific users or groups on a regular basis, such as daily, weekly, or monthly.
+
+    Ad-hoc reporting: You can generate ad-hoc reports on demand to quickly analyze specific aspects of your environment or troubleshoot issues.
+
+    Data export: Dynatrace allows you to export data from your monitored environment to a range of formats, including CSV, Excel, and PDF.
+
+    Integration: Dynatrace integrates with a range of third-party reporting tools and services, allowing you to extend its reporting capabilities and integrate it into your existing workflows.
+
+-----------------------------------------------------------------------------------
+	o Service Quality Reports
+	-----------------------------------------------------------------------------------
+	Dynatrace provides several service quality reports that help you understand the performance of your services and applications. Here are some of the key service quality reports:
+
+    Service health dashboard: This report provides a high-level view of the health and availability of your services, highlighting any issues or anomalies that require attention.
+
+    Service flow analysis: This report allows you to drill down into the performance of individual services, including response times, error rates, and resource utilization.
+
+    Service-level agreements (SLA) reports: These reports allow you to track the performance of your services against predefined SLAs, helping you to ensure that your services are meeting the needs of your users.
+
+    Synthetic monitoring reports: These reports provide insights into the performance of your services from the perspective of end-users, using synthetic transactions to simulate real-world usage scenarios.
+
+    Log analytics reports: These reports allow you to analyze logs from your services and applications, helping you to identify issues and troubleshoot problems.
+
+
+	-----------------------------------------------------------------------------------
+	o Availability Report
+	-----------------------------------------------------------------------------------
+	Dynatrace provides several availability reports that help you understand the availability and uptime of your services and applications. Here are some of the key availability reports:
+
+    Availability overview: This report provides a high-level view of the availability of your services, highlighting any outages or disruptions.
+
+    Availability analysis: This report allows you to drill down into the availability of individual services, including downtime, uptime, and error rates.
+
+    Availability trend analysis: This report provides insights into the trends and patterns of availability over time, helping you to identify areas for improvement.
+
+    Availability SLA reports: These reports allow you to track the availability of your services against predefined SLAs, helping you to ensure that you are meeting your service level commitments.
+
+    Synthetic monitoring reports: These reports provide insights into the availability and response times of your services from the perspective of end-users, using synthetic transactions to simulate real-world usage scenarios.
+
+	-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+* Problems Analysis
+-----------------------------------------------------------------------------------
+Dynatrace provides several problem analysis features to help you identify and troubleshoot issues within your environment. Here are some of the key problem analysis capabilities:
+
+    Problem detection: Dynatrace uses artificial intelligence and machine learning to automatically detect problems within your environment, including application errors, infrastructure issues, and user experience problems.
+
+    Root cause analysis: Dynatrace uses a range of diagnostic tools and techniques to identify the root cause of problems within your environment, including code-level analysis, infrastructure tracing, and user session replay.
+
+    Impact analysis: Dynatrace provides insights into the impact of problems on your environment, including the number of users affected, the scope of the problem, and the business impact.
+
+    Problem correlation: Dynatrace correlates problems across your environment, allowing you to identify common root causes and patterns of behavior.
+
+    Problem resolution tracking: Dynatrace tracks the resolution of problems over time, providing insights into the effectiveness of your problem-solving efforts and helping you to improve your overall response time.
+
+
+-----------------------------------------------------------------------------------
+	o Root cause Analysis
+	-----------------------------------------------------------------------------------
+	Root cause analysis is the process of identifying the underlying cause or causes of a problem within a system. In the context of IT operations and performance monitoring, root cause analysis is used to identify the root cause of issues within an application or infrastructure environment.
+
+Dynatrace provides several tools and techniques for performing root cause analysis, including:
+
+    Code-level analysis: Dynatrace provides visibility into the code execution of your applications, allowing you to identify specific code paths that may be causing performance issues.
+
+    Infrastructure tracing: Dynatrace provides visibility into the performance of your infrastructure components, allowing you to identify issues with network, storage, or compute resources that may be impacting your applications.
+
+    User session replay: Dynatrace allows you to replay user sessions, providing insights into user behavior and interactions that may be causing issues within your application.
+
+    Problem correlation: Dynatrace correlates problems across your environment, allowing you to identify common root causes and patterns of behavior.
+
+    AI-powered analysis: Dynatrace uses artificial intelligence and machine learning to automatically detect and analyze performance issues, providing insights into potential root causes and recommendations for resolution.
+
+	
+	-----------------------------------------------------------------------------------
+	o Visual Resolution Path
+	-----------------------------------------------------------------------------------
+	Dynatrace's Visual Resolution Path is a powerful tool that provides a visual representation of the steps that were taken to resolve a problem within your environment. The Visual Resolution Path allows you to track the progression of a problem from detection to resolution, providing insights into the effectiveness of your problem-solving efforts.
+
+	The Visual Resolution Path provides a timeline of events, including notifications, alerts, and diagnostic data. It also shows the specific actions that were taken to resolve the problem, including configuration changes, code fixes, or infrastructure updates.
+
+	With the Visual Resolution Path, you can quickly identify the steps that were taken to resolve a problem, understand the impact of those steps on your environment, and identify areas for improvement. This can help you to improve your problem-solving processes and reduce the time and effort required to resolve issues in the future.
+		
+	-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+* Host Monitoring
+-----------------------------------------------------------------------------------
+Dynatrace provides comprehensive host monitoring capabilities that allow you to monitor the health and performance of your physical and virtual hosts. Host monitoring allows you to identify issues with CPU, memory, disk usage, and network connectivity, and track the performance of individual hosts over time.
+
+Here are some of the key features of Dynatrace's host monitoring capabilities:
+
+    Automated discovery: Dynatrace automatically discovers hosts within your environment, allowing you to quickly identify and monitor new hosts as they are added.
+
+    Real-time monitoring: Dynatrace provides real-time monitoring of your hosts, allowing you to identify performance issues as they happen.
+
+    Host health and performance metrics: Dynatrace provides a range of health and performance metrics for your hosts, including CPU usage, memory usage, disk usage, and network connectivity.
+
+    Host process monitoring: Dynatrace allows you to monitor the performance of individual processes running on your hosts, providing insights into performance bottlenecks and resource usage.
+
+    Host log monitoring: Dynatrace provides log monitoring capabilities for your hosts, allowing you to track system events and diagnose issues with your hosts.
+
+-----------------------------------------------------------------------------------
+    o Windows Server Monitoring
+	-----------------------------------------------------------------------------------
+	Dynatrace provides comprehensive Windows server monitoring capabilities that allow you to monitor the health and performance of your Windows servers. With Dynatrace, you can gain deep insights into the performance of your Windows servers, identify issues with CPU, memory, disk usage, and network connectivity, and track the performance of individual processes and applications running on your servers.
+
+	Here are some of the key features of Dynatrace's Windows server monitoring capabilities:
+
+    Automatic discovery: Dynatrace automatically discovers your Windows servers, allowing you to quickly identify and monitor new servers as they are added to your environment.
+
+    Real-time monitoring: Dynatrace provides real-time monitoring of your Windows servers, allowing you to identify performance issues as they happen.
+
+    Performance metrics: Dynatrace provides a range of performance metrics for your Windows servers, including CPU usage, memory usage, disk usage, and network connectivity.
+
+    Process and application monitoring: Dynatrace allows you to monitor the performance of individual processes and applications running on your Windows servers, providing insights into performance bottlenecks and resource usage.
+
+    Log monitoring: Dynatrace provides log monitoring capabilities for your Windows servers, allowing you to track system events and diagnose issues with your servers.
+
+    Integration with Windows Event Log and Performance Monitor: Dynatrace integrates with Windows Event Log and Performance Monitor, allowing you to access a wealth of system and application-level data.
+	
+	
+	-----------------------------------------------------------------------------------
+    o Linux Server Monitoring
+	-----------------------------------------------------------------------------------
+	Dynatrace provides comprehensive Linux server monitoring capabilities that allow you to monitor the health and performance of your Linux servers. With Dynatrace, you can gain deep insights into the performance of your Linux servers, identify issues with CPU, memory, disk usage, and network connectivity, and track the performance of individual processes and applications running on your servers.
+
+Here are some of the key features of Dynatrace's Linux server monitoring capabilities:
+
+    Automatic discovery: 
+		Dynatrace automatically discovers your Linux servers, allowing you to quickly identify and monitor new servers as they are added to your environment.
+		
+		Lab: in eks we can see this.
+
+    Real-time monitoring: 
+		Dynatrace provides real-time monitoring of your Linux servers, allowing you to identify performance issues as they happen.
+
+    Performance metrics: 
+		Dynatrace provides a range of performance metrics for your Linux servers, including CPU usage, memory usage, disk usage, and network connectivity.
+
+
+    Process and application monitoring: 
+		Dynatrace allows you to monitor the performance of individual processes and applications running on your Linux servers, providing insights into performance bottlenecks and resource usage.
+
+		
+
+
+    Log monitoring: 
+		Dynatrace provides log monitoring capabilities for your Linux servers, allowing you to track system events and diagnose issues with your servers.
+
+    Integration with Linux system tools: Dynatrace integrates with Linux system tools such as top, ps, and iostat, allowing you to access a wealth of system and application-level data.
+	
+	-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+* Dynatrace AWS Integration
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+https://youtu.be/1CbhUjqDsoY?list=PLqt2rd0eew1YFx9m8dBFSiGYSBcDuWG38
+
+https://www.youtube.com/watch?v=1CbhUjqDsoY&list=PLqt2rd0eew1YFx9m8dBFSiGYSBcDuWG38&index=1
+
+
+https://learn.dynatracelabs.com/
+	Davis tutorial
+	
+https://solutionsreview.com/network-monitoring/the-best-dynatrace-tutorials-on-youtube/	
+
+lab: 
+	install dynatrace on a linux box
+	while installing 
+		install logs - /var/log/dynatrace/oneagent/installer/installation_XXX.log
+		install location - 
+			/opt/dynatrace/oneagent
+		adding entry with oneagentdumpproc 
+			/etc/sysctl.conf
+			
+			
+		/opt/dynatrace/oneagent/lib64/oneagentwatchdog
+		/opt/dynatrace/oneagent/agent/conf/watchdog.conf
+	ps -eaf | grep dyna
+	
+	click on "show deployment status" (in linux add screen)
+	
+lab: 
+	linux
+		manage
+			deploy dynatrace
+			Deployment status
+			
+		install jenkins on it.
+			start jenkins
+
+		go to "services" in 5 min.
+			automtically dynatrace is able to detect it
+			
+		try accessing the jenkins and create a job
+			see that there are multiple entry in services
+			click to track which call is mostly used etc.
+			
+	
+	application monitoring
+		------------------------------------------------------------------------------
+		install jenkins and watch what happens
+		
+		
+		install and start tomcat
+		deploy https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/
+		
+		https://www.dynatrace.com/technologies/java-monitoring/tomcat/
+
+		yum update -y
+		sudo yum install java-11-amazon-corretto-headless
+
+
+		First, make sure you have a Dynatrace account and have set up an application monitoring environment.
+
+		Download the Dynatrace agent from the Dynatrace website.
+
+		Extract the agent zip file to a location on your Tomcat server.
+
+		In the Tomcat bin directory, edit the catalina.sh (Linux) or catalina.bat (Windows) script and add the following line:
+
+		bash
+
+		export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/path/to/dynatrace-agent.jar"
+
+		Note: Make sure to replace /path/to/dynatrace-agent.jar with the actual path to the agent on your server.
+
+		Save the script and restart Tomcat.
+
+		In the Dynatrace web console, navigate to the "Applications" tab and click "Add application".
+
+		Select "Java" as the technology and enter a name for your Tomcat application.
+
+		Select "Host" as the deployment option and enter the hostname or IP address of your Tomcat server.
+
+		Select the Dynatrace agent version you downloaded earlier and click "Next".
+
+		Configure your application settings, such as the application ports and URLs, and click "Save".
+
+		Wait a few minutes for Dynatrace to detect your Tomcat application and start monitoring it.
+
+
+		------------------------------------------------------------------------------
+		How to setup WAMP server in Linux?
+		
+				
+		NB: This will work only on a 32 bit machine . Better do docker
+
+		$ sudo -s
+		$ cd /opt/
+		$ yum install wget -y
+
+		# URL for right package - https://sourceforge.net/projects/xampp/files/XAMPP%20Linux/7.4.29/
+
+		$ wget https://sourceforge.net/projects/xampp/files/XAMPP%20Linux/7.4.29/xampp-linux-x64-7.4.29-1-installer.run/download
+
+		$ mv download xampp-linux-x64-7.4.29-1-installer.run
+
+		$ chmod 755 xampp-linux-x64-7.4.29-1-installer.run
+		$ ./xampp-linux-x64-7.4.29-1-installer.run
+
+		$ /opt/lampp/lampp status
+		$ /opt/lampp/lampp start
+		$ /opt/lampp/lampp status
+		$ /opt/lampp/lampp stop
+		$ /opt/lampp/lampp start
+		$ curl http://13.233.196.197/dashboard/
+		$ sudo -s
+		$ cd /opt/
+		$ yum install wget -y
+		$ wget https://www.apachefriends.org/xampp-files/8.0.0/xampp-linux-x64-8.0.0-2-installer.run
+		$ chmod 755 xampp-linux-x64-8.0.0-2-installer.run
+		$ ./xampp-linux-x64-8.0.0-2-installer.run
+
+		$ /opt/lampp/lampp status
+		$ /opt/lampp/lampp start
+		$ /opt/lampp/lampp status
+		$ /opt/lampp/lampp stop
+		$ /opt/lampp/lampp start
+		$ curl http://13.233.196.197/dashboard/
+	------------------------------------------------------------------------------
+	
+	Integration with any product.
+		For integration
+		https://www.dynatrace.com/hub/
+			search for Oracle
+
+	
+	systemctl start dynatracegateway
+https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-activegate/operation/stop-restart-activegate
+
+
+	docker monitoring
+		docker monitoring is also deprecated
+		
+		https://www.youtube.com/watch?v=NO3BCqK-Axo&list=PL3mGAAf6tenXwzN303xLjy7ynuGDxRA0-
+		create ec2 instance
+		install docker
+		install oneagent dynatrace
+		restart docker
+			yum install docker -y
+			systemctl start docker
+			systemctl status docker
+		
+		
+		to run dynatrace one agent as docker container 
+		----------------------------------------------
+			docker run -d --restart=unless-stopped --privileged=true --pid=host --net=host --cgroupns=host -v 
+			/:/mnt/root -e ONEAGENT_INSTALLER_SCRIPT_URL="<REPLACE_WITH_YOUR_URL>" -e ONEAGENT_INSTALLER_DOWNLOAD_TOKEN=<Api-Token> dynatrace/oneagent <INSTALLER_PARAMETERS>
+			
+			Get REPLACE_WITH_YOUR_URL from "Deploy Dynatrace" - "Linux" - Download installer url 
+			
+		
+			docker run -d --restart=unless-stopped --privileged=true --pid=host --net=host --cgroupns=host -v /:/mnt/root -e ONEAGENT_INSTALLER_SCRIPT_URL="https://smp82525.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" -e ONEAGENT_INSTALLER_DOWNLOAD_TOKEN="dt0c01.2Z6UEEVNZ62QWBRR7H43FSUX.QJOGTKIVBYPL75Y2T5NG3HFC3GQXVVWHNWN56PTXS5NB7LNEWWGAVLVLJTIDYWDB" dynatrace/oneagent APP_LOG_CONTENT_ACCESS=1
+			
+			--header="Authorization: Api-Token dt0c01.2Z6UEEVNZ62QWBRR7H43FSUX.QJOGTKIVBYPL75Y2T5NG3HFC3GQXVVWHNWN56PTXS5NB7LNEWWGAVLVLJTIDYWDB"
+
+		----------------------------------------------
+		
+		
+		systemctl restart docker (after installing agent)
+		in dynatrace 
+			go to containers section
+			
+		Create my front end and backend with resource limit
+			docker run -d -e MYSQL_ROOT_PASSWORD=admin --cpus=1 --memory=1000m -v /home/docker/mysql-data:/var/lib/mysql --name mysqlserver mysql
+
+			Follow rest from D:\PraiseTheLord\HSBGInfotech\Others\vilas\docker-k8s\dockerfiles\frontEndAndBackEnd\webfrontend-mysqldb\instructions.txt
+			
+			docker run busybox /bin/sh -c  "while sleep 0.01; do wget -q -O- http://localhost:8888/HelloWorld/customers.jsp; done"
+			while sleep 0.01; do wget -q -O- http://localhost:8888/HelloWorld/customers.jsp; done
+
+
+	SLO
+		https://www.youtube.com/watch?v=MORoTepOQQk
+			(100)*(builtin:service.dbconnections.success:splitBy())/(builtin:service.dbconnections.total:splitBy())
+
+	kubernetes monitoring
+		https://www.youtube.com/watch?v=I5EBw934ElQ
+	synthetic analysis
+		run a test
+
+
+
+
+	log monitoring 
+		https://www.dynatrace.com/support/help/observe-and-explore/logs/log-monitoring/acquire-log-data
+	ai 
+		install oneagent
+		automatically detects docker, apps in docker, db in docker etc.
+		
+	problem detection in dynatrace
+		put load to reach 97% dynatrace detects and reports
+		
+	alert in dynatrace
+		"alert profiling" in D:\PraiseTheLord\corporateTrainer\Companies\eduramp\Tavisca.txt
+			line: 469
+		steps 
+			create ec2 instance 
+			install oneagent
+			reference : https://www.youtube.com/watch?v=qNQ_p4jrz3A
+				setup alert profile in "Settings" - "Alerting" - "Problem Alerting Profiles"
+				setup integration in "Settings" - "Integration " - "Problem Notification"
+			reference: https://www.youtube.com/watch?v=eWCuPlnb5Pc
+				min.: 3.37
+				Enable alert when ec2 is gracefully stopped.
+					Default: graceful shutdown is not alerted
+			shutdown ec2.
+				should generate an alert
+			
+	
+	dynatrace session recording?
+		
+	
+	enable memory dumb in dynatrace
+		done with active gate 
+		https://www.youtube.com/watch?v=blhIPeqCVDk&list=PL3mGAAf6tenXwzN303xLjy7ynuGDxRA0-&index=8	
+		
