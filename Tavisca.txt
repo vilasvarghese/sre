@@ -62,7 +62,7 @@ AKIAT4L7NELAEELSFCUQ
 		kubectl edit svc kibana-kibana
 			Change ClusterIP to Nodeport
 		curl -I -k -u elastic:$password https://<ip>:5601/app/kibana
-		curl -I -k -u elastic:AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS1raWJhbmE6SUtUelNOVEdUc2FRT1dNbWktMTJNZw http://3.91.240.252:<nodeport>/app/kibana
+		curl -I -k -u elastic:AAAXXXX http://3.91.240.252:<nodeport>/app/kibana
 
 
 			
@@ -360,9 +360,9 @@ Open dynakube.yaml
 kubectl apply -f dynakube.yaml
 
 
-dt0c01.UEZ6J2E35XUNO7MCNT7EVXTI.UQA5GUXPNIUN4MHFY3LPFSBHENBHYWKDK64IYJUJZBP7J2ISGQOP5B37IVTZQ3CU
+dt0c01.UXXXX.UXXXXXXXXXXXXXXXXXXXX
 
-dt0c01.CYEONTN2RPR4KGQKZMFPNIBV.JZLU2WJBEYDTOXBJASAQE5QBPFJBLNUE7NUUQOWQONYDK4FEZGSOVEVXVJA6G3FF
+dt0c01.CXXXXXXXXXXXXXXXXX.JZXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 kubectl get pod -n dynatrace
 
