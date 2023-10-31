@@ -562,7 +562,7 @@ https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-activeg
 		
 			docker run -d --restart=unless-stopped --privileged=true --pid=host --net=host --cgroupns=host -v /:/mnt/root -e ONEAGENT_INSTALLER_SCRIPT_URL="https://smp82525.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" -e ONEAGENT_INSTALLER_DOWNLOAD_TOKEN="dt0c01.2Z6UEEVNZ62QWBRR7H43FSUX.QJOGTKIVBYPL75Y2T5NG3HFC3GQXVVWHNWN56PTXS5NB7LNEWWGAVLVLJTIDYWDB" dynatrace/oneagent APP_LOG_CONTENT_ACCESS=1
 			
-			--header="Authorization: Api-Token dt0c01.2Z6UEEVNZ62QWBRR7H43FSUX.QJOGTKIVBYPL75Y2T5NG3HFC3GQXVVWHNWN56PTXS5NB7LNEWWGAVLVLJTIDYWDB"
+			--header="Authorization: Api-Token dt0c01.####"
 
 		----------------------------------------------
 		
