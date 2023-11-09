@@ -142,10 +142,16 @@ Sensors:
 
 
 -----------------------------------------------------------------------------------
-Dynatrace offers three different monitoring approaches: OneAgent, agentless monitoring, and synthetic monitoring. Here's a brief overview of the differences between these approaches:
+Dynatrace offers three different monitoring approaches: 
+	OneAgent
+	agentless monitoring
+	synthetic monitoring. 
+	
+	Here's a brief overview of the differences between these approaches:
 
     OneAgent: 
-		OneAgent is an agent-based approach to monitoring. It is a lightweight software agent that is installed on the host machine or container, and it collects data on application and infrastructure performance. OneAgent can monitor a wide range of metrics, including code-level performance, database queries, network performance, and more.
+		OneAgent is an agent-based approach to monitoring. 
+		lightweight software agent that is installed on the host machine or container, and it collects data on application and infrastructure performance. OneAgent can monitor a wide range of metrics, including code-level performance, database queries, network performance, and more.
 
     Agentless monitoring: 
 		Agentless monitoring is a non-intrusive approach to monitoring. It uses protocols like SNMP or JMX to remotely monitor infrastructure and application performance. This approach does not require installation of an agent and is ideal for monitoring devices that do not allow agent installation or have strict security policies.
@@ -160,15 +166,16 @@ Dynatrace offers three different monitoring approaches: OneAgent, agentless moni
 
 		Here are some of the key features of synthetic monitoring in Dynatrace:
 
-			Automated testing: Synthetic monitors can be configured to run at regular intervals to test the availability, functionality, and performance of your web applications.
-
-			Realistic user behavior: Synthetic monitors are designed to mimic the behavior of real users, so you can get a realistic view of application performance.
-
-			Multi-step transactions: Synthetic monitors can be configured to perform multi-step transactions, such as logging in, adding items to a shopping cart, and checking out.
-
-			Customizable test scenarios: Synthetic monitors can be customized to test specific scenarios or user flows within your application.
-
-			Detailed performance metrics: Synthetic monitors provide detailed performance metrics, such as response time, error rate, and availability, so you can identify performance bottlenecks and resolve issues.
+			Automated testing: 
+				Synthetic monitors can be configured to run at regular intervals to test the availability, functionality, and performance of your web applications.
+			Realistic user behavior: 
+				Synthetic monitors are designed to mimic the behavior of real users, so you can get a realistic view of application performance.
+			Multi-step transactions: 
+				Synthetic monitors can be configured to perform multi-step transactions, such as logging in, adding items to a shopping cart, and checking out.
+			Customizable test scenarios: 
+				Synthetic monitors can be customized to test specific scenarios or user flows within your application.
+			Detailed performance metrics: 
+				Synthetic monitors provide detailed performance metrics, such as response time, error rate, and availability, so you can identify performance bottlenecks and resolve issues.
 -----------------------------------------------------------------------------------
 * Dashboards
 
@@ -199,9 +206,11 @@ The Dynatrace dashboard provides a high-level view of the performance and health
 
 		Click on the "Create Dashboard" button in the upper-right corner.
 
-		Give your dashboard a name and select the type of dashboard you want to create (e.g. custom dashboard, application dashboard, etc.).
+		Give your dashboard a name and select the type of dashboard you want to create 
+			(e.g. custom dashboard, application dashboard, etc.).
 
-		Choose the metrics and data sources you want to include in your dashboard. You can select from a range of pre-built dashboards and widgets or create your own custom widgets using the "Custom Chart" option.
+		Choose the metrics and data sources you want to include in your dashboard. 
+			You can select from a range of pre-built dashboards and widgets or create your own custom widgets using the "Custom Chart" option.
 
 		Customize the layout of your dashboard by adding, removing, or rearranging widgets as needed. You can also adjust the size and position of each widget to optimize the layout of your dashboard.
 
@@ -447,7 +456,7 @@ lab:
 			
 	
 	application monitoring
-		------------------------------------------------------------------------------
+	------------------------------------------------------------------------------
 		install jenkins and watch what happens
 		
 		
@@ -578,6 +587,22 @@ https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-activeg
 			
 			docker run busybox /bin/sh -c  "while sleep 0.01; do wget -q -O- http://localhost:8888/HelloWorld/customers.jsp; done"
 			while sleep 0.01; do wget -q -O- http://localhost:8888/HelloWorld/customers.jsp; done
+
+		-------------------------------------------------------
+		
+		install mysql 
+			https://tecadmin.net/how-to-install-mysql-8-on-amazon-linux-2/
+			cat /var/log/mysqld.log | grep "A temporary password"
+				_GavgVhl_0ox
+		
+		dynatrace monitoring for aws (This is not working)
+			https://dynatrace.awsworkshop.io/120_more/10_aws_monitor.html
+				Instead of creating role - create user with the permission 
+				and use key based authenticaiton in dynatrace 
+					choose third party services while generating access key 
+					
+			https://community.dynatrace.com/t5/Cloud-platforms/Any-idea-if-there-is-a-trick-to-connecting-to-AWS-from-Dyntrace/td-p/24827		
+			
 
 
 	SLO
