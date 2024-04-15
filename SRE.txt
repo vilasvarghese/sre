@@ -1,0 +1,357 @@
+	What is SRE?
+-------------------------------------------------------------------------------------------------------------
+-----------------------------------
+
+gcloud app deploy
+while true; do curl -s https://$DEVSHELL_PROJECT_ID.appspot.com/random-error -w '\n\' ;sleep .1s; done 
+gcloud list
+
+Summary
+	SRE 
+		Site Reliability Engineering. 
+		Set of principles and practices to IT infra. management
+		
+	Key aspects of SRE:
+		Focus on reliability and scalability: 
+		Automation and Software-driven approach: 
+		Data-driven decision making: 
+		Proactive approach: 
+
+		Collaboration and communication: 
+	Benefits of using SRE principles:
+		Improve uptime performance 
+		Reduce operational costs through automation 
+		Faster and reliable incident response 
+		Increased business agility 
+		Improved collaboration and communication 
+-----------------------------------
+
+
+
+SRE 
+		Site Reliability Engineering. 
+		Set of principles and practices 
+			apply software engineering approaches to 
+				IT operations and infrastructure. 
+		
+	Key aspects of SRE:
+		Focus on reliability and scalability: 
+			SRE teams prioritize 
+				systems up and running smoothly
+					usage grows and changes. 
+		Software-driven approach: 
+			SRE uses 
+				automation 
+				software tools to manage 
+					infrastructure, 
+					monitor systems
+					respond to incidents. 
+			Reduce 
+				manual effort 
+				faster and efficient operations.
+
+	Data-driven decision making: 
+		Rely on data and metrics 
+			analyze system performance
+			identify potential issues
+			track progress towards reliability goals.
+
+	Proactive approach: 
+		SRE not reacting to problems. 
+		Proactively and efficiently 
+			identifying and mitigating risks
+			building robust systems
+			continually improving processes.
+
+	Collaboration and communication: 
+		Define process and policies of making production reliability collaboratively.
+		Doing it scientifically and data driven way.
+		
+	Here are some of the benefits of using SRE principles:
+
+		Improve 
+			uptime 
+			performance 
+				of software systems
+		Reduce 
+			operational costs 
+				through automation and 
+				proactive maintenance
+		Faster 
+			incident response and 
+			resolution times
+		Increased 
+			business agility 
+			handle scaling demands
+		Improved 
+			collaboration and communication 
+				between IT and development teams
+
+	Here are some resources where you can learn more about SRE:
+
+		Google's SRE website: https://sre.google/
+		The Site Reliability Engineering Book: https://sre.google/books/
+		The SRE subreddit: https://www.reddit.com/r/sre/
+
+	I hope this gives you a good overview of what SRE is and why it's important. Feel free to ask any further questions you have!
+
+
+
+-------------------------------------------------------------------------------------------------------------
+	SRE principles
+-------------------------------------------------------------------------------------------------------------
+
+
+Embrace Risk:
+
+    Accept failures are inevitable in complex systems.
+    Define acceptable levels of risk 
+		Measure it through Service Level Objectives (SLOs).
+    Allocate an "error budget" 
+		to balance reliability with innovation.
+    Avoid over-engineering for perfect uptime.
+
+Setting Service Level Objectives (SLOs):
+
+    Establish clear, measurable targets for system reliability and performance.
+    Align SLOs with business objectives and user expectations.
+    Use SLOs for 
+		decision-making
+		prioritize work
+		measure success.
+    Examples: "99.9% uptime," "latency under 100ms for 95% of requests."
+	
+	SLI (Service Level indicators)
+		for a particular time.
+		e.g.
+			Request Latency
+				time taken for 
+						request to be processed and a response to be received. 
+			Availability SLI (Service Level Indicator) 
+				quantitative measure 
+				percentage of 
+					service is available as intended.
+
+	SLO (Service Level Objectives)
+		Binding target for a collection of SLIs
+		e.g. Total amont of downtime in a year was less than 9 hours
+		
+		has upper and lower bounds
+		higher SLO
+			teams slow down
+		lower SLO
+			quality can be compromised
+		watched between SRE and product
+			on monthly/quaterly/annual
+		
+	SLA (Servie Level Agreement)
+		Business agreement between 
+			a customer and service provider
+			based on SLOs
+		watched between sales and customers
+			violations result in payments
+			
+	
+	SLA should be more lenient than SLO
+		SLO failure should be a warning
+			to act immediately.
+
+
+Error Budgets:
+
+    Allowed amount of downtime or errors 
+		in a service over a given time period.
+    SREs use error budgets to 
+		strike a balance between 
+			reliability and 
+			development velocity. 
+	If the error budget is exhausted, new features or changes are often deprioritized to focus on reliability.
+
+
+	SLO : 99.9%
+	
+	Error budget: 
+		.1 * 60 * 24 * 30
+		43.2 min/month failures
+	
+	99.9% uptime = .1% downtime
+	= .001 * 30 days / monthly * 24hour/day *60 min/ hour 
+	Acceptable downtime in a month = 43.2 min/month
+	
+	Example use case
+		e.g. needs db back up every 1 month and the app is down during this time.
+			takes 15 min to backup
+			
+			time between failures = 30 days
+				30 * 24* 60 
+			downtime = 15 bad min. in a month.
+			
+			every two weeks application becomes slow.
+			takes 30 min. for people to realize and support ticket to come.
+				(consider this time also)
+			30 min. to resolve
+			affects 50 % of users
+	
+			(30 min. to detect + 30 min. to resolve) * 2 weeks/month (happens every 2 weeks) * 50 % users
+			= 60 bad min./month
+
+			
+	
+Eliminating Toil:
+
+    Identify and automate repetitive, manual automatable tasks that drain time and energy.
+    Free up engineers to focus on proactive improvements and innovation.
+    Examples: automating deployments, scaling, configuration management, and incident response.
+
+Monitoring:
+
+    Implement comprehensive system monitoring to detect issues early.
+    Collect and analyze data on system health, performance, and user behavior.
+    Set alerts to notify engineers of potential problems.
+    Use monitoring data to drive continuous improvement.
+
+Automation:
+
+    Use software and tools to automate tasks across operations and development.
+    Reduce manual effort, improve efficiency, and minimize human error.
+    Examples: automating deployments, testing, configuration management, and incident response.
+
+Release Engineering:
+
+    Establish a structured, repeatable process for software releases.
+    Ensure smooth deployments, minimize risk, and improve quality.
+    Involve SREs in release planning and testing.
+
+Simplicity:
+
+    Strive for simplicity in system design and operations.
+    Reduce complexity to make systems easier to understand, manage, and troubleshoot.
+    Prioritize clear abstractions and modularity.
+
+Culture of Collaboration:
+
+    Foster close collaboration between SREs and developers.
+    Share responsibility for reliability and performance.
+    Break down silos and encourage knowledge sharing.
+
+Continuous Improvement:
+
+    Embrace a culture of continuous learning and experimentation.
+    Regularly review and refine processes, tools, and techniques.
+    Use data to drive decision-making and measure progress.
+
+-------------------------------------------------------------------------------------------------------------
+	SRE practices 
+-------------------------------------------------------------------------------------------------------------
+    
+Incident Management:
+
+    Develop well-defined incident response processes, including clear roles and responsibilities.
+    Prioritize rapid detection, response, and resolution of incidents.
+    Conduct blameless post-mortems to learn from incidents and prevent recurrence.
+
+Monitoring and Alerting:
+
+    Establish comprehensive monitoring for key performance indicators and critical system metrics.
+    Set up meaningful alerts based on SLIs to detect and respond to deviations from SLOs.
+    Continuously refine alerting thresholds based on historical data and system behavior.
+
+Capacity Planning:
+
+    Regularly assess and forecast system capacity requirements.
+    Use capacity planning to ensure that systems can handle expected loads and traffic spikes.
+    Scale infrastructure proactively to accommodate growth.
+
+Change Management:
+
+    Implement practices such as canary releases, feature flags, and gradual rollouts to minimize the impact of changes.
+    Establish a rigorous and standardized process for making and deploying changes to production.
+    Monitor changes closely and roll back if unexpected issues arise.
+
+Hybrid Roles and On-Call Responsibilities:
+
+    Foster a culture of shared responsibility between development and operations teams.
+    Implement an on-call rotation where team members are responsible for addressing incidents outside of regular working hours.
+    Rotate on-call duties to distribute the burden and provide a broader understanding of system behavior.
+
+Cultural Emphasis on Reliability:
+
+    Cultivate a culture where reliability is a shared goal and responsibility across the organization.
+    Encourage collaboration and communication between development, operations, and other relevant teams.
+
+Risk Management:
+
+    Assess and manage risks associated with system changes, updates, and operational processes.
+    Use feature flags and gradual rollouts to minimize the impact of changes on system reliability.
+    Continuously evaluate and mitigate potential risks to system performance.
+
+Documentation and Knowledge Sharing:
+
+    Maintain comprehensive and up-to-date documentation for systems, processes, and procedures.
+    Encourage knowledge sharing through regular training, cross-functional collaboration, and documentation reviews.
+
+Chaos Engineering:
+
+    Conduct controlled experiments to proactively identify weaknesses and vulnerabilities in the system.
+    Simulate real-world failure scenarios to test the resilience of systems and validate the effectiveness of recovery mechanisms.
+-------------------------------------------------------------------------------------------------------------
+	The history of SRE and its development
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	The principles of SRE
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Differences between SRE and traditional operations roles
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	The benefits of implementing SRE
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	SRE teams and organizational structure
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	The role of SRE in DevOps
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+o	Part 2: Building Reliable Systems
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Define reliability by embracing risk
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Measure reliability through SLIs, SLOs, and error budget
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Lab Activity: Define SLx
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Lab Activity: Build Error Budget Policy
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Reliability concepts and metrics
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Understanding the "error budget" concept
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Setting service level objectives (SLOs)
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	How to measure and report on reliability
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Designing reliable systems
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Building resiliency into systems
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Managing risk and failure modes
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Scaling systems for growth
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+	Scaling Culture
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------

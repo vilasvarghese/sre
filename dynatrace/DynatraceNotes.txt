@@ -604,6 +604,12 @@ https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-activeg
 			https://community.dynatrace.com/t5/Cloud-platforms/Any-idea-if-there-is-a-trick-to-connecting-to-AWS-from-Dyntrace/td-p/24827		
 			
 
+	k8s 
+		sudo kubeadm init --ignore-preflight-errors=NumCPU   --ignore-preflight-errors=Mem
+		kubectl get nodes
+		kubectl describe node <name>
+			note the 
+
 
 	SLO
 		https://www.youtube.com/watch?v=MORoTepOQQk
@@ -650,3 +656,44 @@ https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-activeg
 		done with active gate 
 		https://www.youtube.com/watch?v=blhIPeqCVDk&list=PL3mGAAf6tenXwzN303xLjy7ynuGDxRA0-&index=8	
 		
+Reference: https://www.youtube.com/watch?v=rw8u3oZ4RdY
+
+Dynatrace 
+	Infrastructure observability
+	Application observability
+	Security protection 
+	Security analytics
+	Digital experience 
+	Business analytics 
+	Automations
+	Custom Solutions 
+	
+Platform 
+	AutomationEngine 
+	AppEngine 
+	Smartscape 
+	Davis AI
+		
+		
+	Grail 
+		optimize and store in Grail 
+		
+		
+	Unified Ingest 
+	PurePath 
+	OneAgent 
+	
+	Hub
+	
+Can track 
+	Topology 
+	Traces
+	Metrics
+	Logs
+	Behaviour 
+	Code 
+	Metadata
+	Network 
+	
+	https://github.com/dynatrace-perfclinics/dynatrace-getting-started
+	

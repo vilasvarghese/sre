@@ -329,7 +329,7 @@ Reference: https://www.tutorialspoint.com/difference-between-mirroring-and-repli
 			Legal Consequences: In some cases, downtime can result in legal consequences, such as breach of service level agreements (SLAs) or contractual obligations. Organizations may be held legally accountable for failing to meet service availability commitments.
 
 		Minimizing downtime and implementing strategies for high availability, fault tolerance, and disaster recovery are critical for mitigating these impacts in production environments. Redundancy, failover mechanisms, regular maintenance, and monitoring are key components of a robust strategy to reduce the negative effects of downtime.
-
+contine from here 
 	Recovery Time Objective (RTO) and Recovery Point Objective (RPO)
 	------------------------------------------------------------------
 			Recovery Time Objective (RTO) and Recovery Point Objective (RPO)
@@ -340,7 +340,7 @@ Reference: https://www.tutorialspoint.com/difference-between-mirroring-and-repli
 							for their systems and data in the event of a disaster or disruption.
 
 		Recovery Time Objective (RTO):
-			maximum acceptable to restore a system or service after a disruption. 
+			maximum time acceptable to restore a system or service after a disruption. 
 			time-bound goal 
 			indicates how quickly an organization should be able to recover its systems 
 				to a state where they are functional and can provide services again. 

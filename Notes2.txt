@@ -1283,7 +1283,7 @@ Ignore below
 		
 	
 ################################################################################################
-Performance & RUM Monitoring - NewRelic
+Performance & RUM (Real User Monitoring) Monitoring - NewRelic
 ################################################################################################
 
 https://newrelic.com/
@@ -1435,8 +1435,9 @@ Site Reliability Engineering
 				99.9% (three 9s): 
 					8 hours and 45 minutes of downtime per year.
 			The desired level of availability 
-				depends on the specific requirements and 
-				priorities of the system or service, 
+				depends on the specific 
+					requirements and 
+					priorities of the system or service, 
 				specified as a Service Level Objective (SLO) in SRE.
 		Plan in case of failure
 			SRE teams 
@@ -1460,7 +1461,12 @@ Site Reliability Engineering
 						real-time monitoring.
 
 			Incident response planning: 
-				Creating and practicing an incident response plan that outlines the steps to be taken in the event of a failure. This includes assigning roles and responsibilities, defining communication channels, and establishing a clear process for restoring service.
+				Creating and practicing an incident response plan 
+					outlines the steps to be taken in the event of a failure. 
+				
+				assigning roles and responsibilities
+				defining communication channels
+				establishing a clear process for restoring service.
 
 			Chaos engineering: 
 				Proactively testing the system to identify and resolve potential failures before they occur in production.
@@ -1663,7 +1669,7 @@ The 95th percentile and 99th percentile values
 					
 		
 Example use case
-		e.g. needs db back up every 2 months.
+		e.g. needs db back up every 1 month.
 			takes 2 hours to backup
 			
 			time between failures = 30 days
@@ -1674,18 +1680,18 @@ Example use case
 			120 min * 12 months * 100% = 1440 bad min/year
 			
 		If error budget calculation(99.5% reliability)
-		(100 - 99.5)/100 * 365 days/year * 24 hours/day * 60 min./hour = 2628
+		(100 - 99.5)/100 * 365 days/year * 24 hours/day * 60 min./hour = 2628 min./year 
 		Monthly db backup is taking half of the error budget.
 		
 		
-	are the more problems?
+	are there more problems?
 	every two weeks db becomes slow.
 	takes 30 min. for people to realize and support ticket to come.
 		(consider this time also)
 	30 min. to resolve
 	affects 50 % of users
 	
-	30 min. to detect * 30 min. to resolve * 26 weeks/year (happens every 2 weeks) * 50 % users
+	(30 min. to detect + 30 min. to resolve) * 26 weeks/year (happens every 2 weeks) * 50 % users
 	= 780 bad min./year
 	
 	likewise
@@ -1817,7 +1823,10 @@ Example use case
 		when SLI is broken
 			identify where is it broken
 			refer pattern 
-				which region, service, feature is broken
+				which 
+					region
+					service
+					feature is broken
 		Look at the traces to id
 			identify the dependencies
 				define context where you need to debug/attack
@@ -2156,12 +2165,33 @@ Fault Tolerance - Fault Isolation Terms
 			adds a barrier to the service 
 			from other services 
 			so that failure on either of them won’t affect the other. 
-		Say we roll out a new feature ‘Advertisement’ in our content sharing app. We can have two architectures Swimlane
-	If Ads are generated on the fly synchronously during each Newsfeed request, the faults in the Ads feature get propagated to the Newsfeed feature. Instead if we swimlane the “Generation of Ads” service and use a shared storage to populate Newsfeed App, Ads failures won’t cascade to Newsfeed, and worst case if Ads don’t meet SLA , we can have Newsfeed without Ads.
+		Say we roll out a new feature ‘Advertisement’ in our content sharing app. 
+		We can have two architectures Swimlane
+	
+	Summary of belwo: Make calls async. 
+		Let the called app populate into a storage or db.
+		Calling app picks it from there.
+		Better error handling
+	If Ads are generated on the fly synchronously 
+		during each Newsfeed request, 
+			the faults in the Ads feature 
+				get propagated to the Newsfeed feature. 
+		Instead if we swimlane 
+			the “Generation of Ads” service 
+				use a shared storage 
+					to populate Newsfeed App, 
+				Ads failures won’t cascade to Newsfeed
+			worst case if Ads don’t meet SLA 
+				we can have Newsfeed without Ads.
 	Let's take another example, we have come up with a new model for our Content sharing App. Here we roll out an enterprise content sharing App where enterprises pay for the service and the content should never be shared outside the enterprise.
 
 Swimlane Principles
-	Principle 1: Nothing is shared (also known as “share as little as possible”). The less that is shared within a swim lane, the more fault isolative the swim lane becomes. (as shown in Enterprise use-case)
+	Principle 1: 
+		Nothing is shared 
+			(also known as “share as little as possible”). 
+		The less that is shared within a swim lane
+			more fault isolative the swim lane becomes. 
+				(as shown in Enterprise use-case)
 	Principle 2: Nothing crosses a swim lane boundary. Synchronous (defined by expecting a request—not the transfer protocol) communication never crosses a swim lane boundary; if it does, the boundary is drawn incorrectly. (as shown in Ads feature)
 
 Swimlane Approaches
