@@ -18,11 +18,11 @@ def create_ec2_instance():
         print ("Creating EC2 instance")
         resource_ec2 = boto3.client("ec2")
         resource_ec2.run_instances(
-            ImageId="ami-0e001c9271cf7f3b9",
+            ImageId="ami-08be1e3e6c338b037",
             MinCount=1,
             MaxCount=1,
-            InstanceType="t2.large",
-            KeyName="vijay"
+            InstanceType="t2.micro",
+            KeyName="vilasohio2"
         )
     except Exception as e:
         print(e)
@@ -146,7 +146,7 @@ def list_stopped_instance():
 
     instances = ec2_client.describe_instances(
         Filters=[
-            { "Name": "tag:Name", "Values": ["Akash"] },
+            { "Name": "tag:Name", "Values": ["Vilas"] },
             { "Name": "instance-state-name", "Values": ["stopped"] }
         ]
     )
@@ -225,9 +225,9 @@ def terminate_ec2_instance():
     except Exception as e:
         print(e)
  
-#create_ec2_instance()
+create_ec2_instance()
 #get_all_instances_public_ip()
-create_ec2_spot_instance()
+#create_ec2_spot_instance()
 #create_ec2_spot_instance()
 #print_all_instances()
 #create_ec2_instance()
