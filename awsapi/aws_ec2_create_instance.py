@@ -12,20 +12,22 @@ def create_ec2_instance():
     Amazon ami: ami-079db87dc4c10ac91 in nvg
     Centos ami: ami-05a36e1502605b4aa
     Ubuntu ami: ami-0c7217cdde317cfec in ngv
+    ami-0a84ffe13366e143f - my k8s ami in ngv before init 
     """
     try:
         print ("Creating EC2 instance")
         resource_ec2 = boto3.client("ec2")
         resource_ec2.run_instances(
-            ImageId="ami-06aa3f7caf3a30282",
-            MinCount=2,
-            MaxCount=2,
-            InstanceType="t3.medium",
-            KeyName="shishir"
+            ImageId="ami-0e001c9271cf7f3b9",
+            MinCount=1,
+            MaxCount=1,
+            InstanceType="t2.large",
+            KeyName="vijay"
         )
     except Exception as e:
         print(e)
-#subro, purvi, sayantan, monalisa, darshan, rahul, william, sayan, mohinder, jyotishman, sankalita, utkarsh, poorna, uday, shishir
+            #amresh, manish, siva, syam, sushrut, thiru, penchalla, jurnail, vijay, tamaghna
+            #https://267092042432.signin.aws.amazon.com/console
 
 def create_ec2_spot_instance():
     """
@@ -37,20 +39,25 @@ def create_ec2_spot_instance():
     Amazon ami: ami-079db87dc4c10ac91 in nvg
     Centos ami: ami-05a36e1502605b4aa
     Ubuntu ami: ami-0c7217cdde317cfec in ngv
+    Ununtu ami in us-west-2: ami-0cf2b4e024cdb6960
     """
     try:
         print ("Creating EC2 instance")
         resource_ec2 = boto3.client("ec2")
         resource_ec2.request_spot_instances(
             LaunchSpecification={
-                'ImageId': 'ami-0e9107ed11be76fde',
-                'KeyName': 'shishir',
-                'InstanceType': 't3a.medium',
+                'ImageId': 'ami-09040d770ffe2224f',
+                'KeyName': 'vilasohio',
+                'InstanceType': 't2.large',
             'Placement': {
-                'AvailabilityZone': 'us-east-1a',
+                'AvailabilityZone': 'us-east-2a',
             }
+            #mon, jodel, kim
 
-            #subro, purvi, sayantan, monalisa, darshan, rahul, william, sayan, mohinder, jyotishman, sankalita, utkarsh, poorna
+            # 
+            #tamaghna, thiru
+            #penchalla, siva, sushrut, syam, vijay, amresh,manish, 
+            
         }
         )
     except Exception as e:
@@ -76,12 +83,19 @@ def get_all_instances_public_ip():
         Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
 
  for instance in running_instances.all():
+    #print(
+    #     "Public IP: {0}, Key: {1}\n".format(
+    #     instance.public_ip_address, instance.key.name
+    #     )
+    # )
+     #
      #print(
      #    "Id: {0}\nPlatform: {1}\nType: {2}\nPublic IPv4: {3}\nAMI: {4}\nState: {5}\n".format(
      #    instance.id, instance.platform, instance.instance_type, instance.public_ip_address, instance.image.id, instance.state
      #    )
      #)
      instance_name = [tag['Value'] for tag in instance.tags if tag['Key'] == 'Name'][0]
+     
      print(
          "Name: {0}, Public IP: {1}\n".format(
          instance_name, instance.public_ip_address
@@ -123,6 +137,65 @@ def reboot_ec2_instance():
         print(e)
 
 
+
+#import json
+#import boto3
+
+def list_stopped_instance():
+    ec2_client = boto3.client("ec2", region_name="us-east-1")
+
+    instances = ec2_client.describe_instances(
+        Filters=[
+            { "Name": "tag:Name", "Values": ["Akash"] },
+            { "Name": "instance-state-name", "Values": ["stopped"] }
+        ]
+    )
+
+    for reservation in instances["Reservations"]:
+        for instance in reservation["Instances"]:
+            #print(instance['InstanceId'])
+            ec2.instances.filter(InstanceIds=instance['InstanceId']).start()
+       
+
+
+def start_all_instances_client():
+   ec2 = boto3.client('ec2', region_name='us-east-1')
+   instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['stopped']},{'Name': 'tag:auto-start-stop','Values':['Yes']}])
+   for instance in instances:
+       id=instance.id
+       ec2.instances.filter(InstanceIds=[id]).stop()
+       print("Instance ID is stopped:- "+instance.id)
+   return "success"
+   
+
+def stop_all_instances():
+    try: 
+        ec2 = boto3.resource('ec2')
+        instances = ec2.instances.filter(Filters=[{'Values': ['running']}])
+        instance_ids = [instance.id for instance in instances]
+        ec2.instances.filter(InstanceIds=instance_ids).stop()
+    except Exception as e:
+        print(e)
+        
+def start_all_instances():
+    try: 
+        ec2 = boto3.resource('ec2')
+        
+        #instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name','Values': ['stopped']}])
+        instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['stopped']}])
+        
+        print (ec2)
+        #filters = [{'Name': 'instance-state-name', 'Values': ['Stopped']}]
+        #instances = ec2.instances.filter(Filters=[{'Values': ['stopped']}])
+        #instances = ec2.instances.filter(Filters=filters)
+        print (instances)
+        instance_ids = [instance.id for instance in instances]
+        print (instance_ids)
+        ec2.instances.filter(InstanceIds=instance_ids).start()
+    except Exception as e:
+        print(e)   
+        
+
 def stop_ec2_instance():
     try:
         print ("Stop EC2 instance")
@@ -151,9 +224,10 @@ def terminate_ec2_instance():
         print(resource_ec2.terminate_instances(InstanceIds=[instance_id]))
     except Exception as e:
         print(e)
-
-get_all_instances_public_ip()
-#create_ec2_spot_instance()
+ 
+#create_ec2_instance()
+#get_all_instances_public_ip()
+create_ec2_spot_instance()
 #create_ec2_spot_instance()
 #print_all_instances()
 #create_ec2_instance()

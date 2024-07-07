@@ -37,5 +37,5 @@ def list_buckets(region):
     for bucket in response['Buckets']:
         print(f'  {bucket["Name"]}')
 
-create_bucket("my-test-bucket", "ap-south-1")
-list_buckets("ap-south-1")
+create_bucket("my-test-bucket", "us-east-1")
+list_buckets("us-east-1")
