@@ -13,23 +13,82 @@ def create_ec2_instance():
     Centos ami: ami-05a36e1502605b4aa
     Ubuntu ami: ami-0c7217cdde317cfec in ngv
     ami-0a84ffe13366e143f - my k8s ami in ngv before init 
+    ami-0866a3c8686eaeeba - ubuntu in nvg
+    ami-00123da0a7af05c8b - antariksha ami 
     """
     try:
         print ("Creating EC2 instance")
         resource_ec2 = boto3.client("ec2")
         resource_ec2.run_instances(
-            ImageId="ami-08be1e3e6c338b037",
-            MinCount=1,
-            MaxCount=1,
-            InstanceType="t2.micro",
-            KeyName="vilasohio2"
+            ImageId="ami-0a84ffe13366e143f",
+            MinCount=2,
+            MaxCount=2,
+            InstanceType="t2.large",
+            KeyName="anubhavnv"
+            #["richardnv", "mittanv", "amithnv", "willchristnv", "minnunv", "sheethalnv", "ashwanthramnv", "doddegowdanv", 
+            #"gunjannv", "samitnv", "akshatnv", "tusharnv", "ayushnv", "anubhavnv"]
         )
     except Exception as e:
         print(e)
-            #amresh, manish, siva, syam, sushrut, thiru, penchalla, jurnail, vijay, tamaghna
+            
+            
+            
             #https://267092042432.signin.aws.amazon.com/console
 
-def create_ec2_spot_instance():
+def create_ec2_spot_instance(key):
+    """
+    MaxCount=1, # Keep the max count to 1, unless you have a requirement to increase it
+    InstanceType="t2.micro", # Change it as per your need, But use the Free tier one
+    KeyName="ec2-key" # Change it to the name of the key you have.
+    :return: Creates the EC2 instance.
+    
+    Amazon ami: ami-079db87dc4c10ac91 in nvg
+    Centos ami: ami-05a36e1502605b4aa
+    Ubuntu ami: ami-0c7217cdde317cfec in ngv
+    Ununtu ami in us-west-2: ami-0cf2b4e024cdb6960
+    my k8s ami - ami-0a84ffe13366e143f
+    """
+    try:
+        print ("Creating EC2 instance")
+        resource_ec2 = boto3.client("ec2")
+        resource_ec2.request_spot_instances(
+            LaunchSpecification={
+                'ImageId': "ami-04f59c565deeb2199",#"ami-0521bc4c70257a054",#"ami-0521bc4c70257a054",#rhel mum #ubuntu mumbai "ami-033a03819e5147e3f", #'ami-0a84ffe13366e143f'-k8s,#'ami-0b05d988257befbbe', - ohio, ami-020cba7c55df1f615 -nv  
+                'KeyName': key,
+                'InstanceType': 't2.large',
+            'Placement': {
+                'AvailabilityZone': 'us-east-1a',
+            }
+        }
+        )
+    except Exception as e:
+        print(e)
+
+    
+
+def create_multiple_instances():
+  """
+  This function takes an array as input and loops through it,
+  calling the 'print_value' function for each element.
+  """
+  #Richard, Yashwanth Mitta, Amith, Minnu, Sheethal, Ashwanthram, Yaswanth Doddegowda, Gunjan, Samit, Akshat 
+  #Tushar, Ayush, Anubhav 
+  #data_array = ["Gunjan","Doddegowda","Samit", "Minnu", "Sheethal", "Mitta", "Anubhav"]
+  #data_array = ["richardnv", "mittanv", "amithnv", "willchristnv", "minnunv", "sheethalnv", "ashwanthramnv", "doddegowdanv", "gunjannv", "samitnv", "akshatnv", "tusharnv", "ayushnv", "anubhavnv"]
+  data_array = ["richardnv", "mittanv", "amithnv", "willchristnv", "minnunv", "sheethalnv", "ashwanthramnv", "doddegowdanv", "gunjannv", "samitnv", "akshatnv", "tusharnv", "ayushnv", "anubhavnv"]
+  
+ 
+  #["Richard", "Mitta", "Amith", "WillChrist", "Minnu", "Sheethal", "Ashwanthram", "Doddegowda", "Gunjan", "Samit", "Akshat", "Tushar", "Ayush", "Anubhav"]
+  
+  #data_array = ["prabhath","anusha","sruthi","satish","lohitha","nutan","satwika","mohana","rithvik","pratham","preethi", "vivek", "kavya", "harsha", "sujith", "harshitha", "bhavya", "geethika", "sanjana", "harsha2", "indu"]#"indu",
+  #data_array = ["indu"]
+  for item in data_array:
+    create_ec2_spot_instance(item)
+
+
+
+
+def create_ec2_spot_instance_withHarkDisk():
     """
     MaxCount=1, # Keep the max count to 1, unless you have a requirement to increase it
     InstanceType="t2.micro", # Change it as per your need, But use the Free tier one
@@ -42,27 +101,29 @@ def create_ec2_spot_instance():
     Ununtu ami in us-west-2: ami-0cf2b4e024cdb6960
     """
     try:
-        print ("Creating EC2 instance")
+    
+        print("Creating EC2 instance")
         resource_ec2 = boto3.client("ec2")
+        
+        dev_sda1 = resource_ec2.blockdevicemapping.EBSBlockDeviceType()
+        dev_sda1.size = 50 # size in Gigabytes
+        bdm = resource_ec2.blockdevicemapping.BlockDeviceMapping()
+        bdm['/dev/sda1'] = dev_sda1 
+        
+        
         resource_ec2.request_spot_instances(
             LaunchSpecification={
-                'ImageId': 'ami-09040d770ffe2224f',
-                'KeyName': 'vilasohio',
-                'InstanceType': 't2.large',
-            'Placement': {
-                'AvailabilityZone': 'us-east-2a',
+                'ImageId': 'ami-0ebfd941bbafe70c6',
+                'KeyName': 'cgi',
+                'InstanceType': 't2.micro',
+                'block_device_mappings': '[bdm]',
+                'Placement': {
+                    'AvailabilityZone': 'us-east-1a',
+                }
             }
-            #mon, jodel, kim
-
-            # 
-            #tamaghna, thiru
-            #penchalla, siva, sushrut, syam, vijay, amresh,manish, 
-            
-        }
         )
     except Exception as e:
         print(e)
-    
 
 
 def describe_ec2_instance():
@@ -225,12 +286,12 @@ def terminate_ec2_instance():
     except Exception as e:
         print(e)
  
-create_ec2_instance()
-#get_all_instances_public_ip()
-#create_ec2_spot_instance()
-#create_ec2_spot_instance()
-#print_all_instances()
+#create_ec2_spot_instance_withHarkDisk() 
 #create_ec2_instance()
+#get_all_instances_public_ip()
+#create_ec2_spot_instance('vilasnv')
+create_multiple_instances()
+#print_all_instances()
 #describe_ec2_instance()
 #reboot_ec2_instance()
 #stop_ec2_instance()

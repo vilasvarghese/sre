@@ -18,15 +18,15 @@ def list_all_users():
 
 def create_user():
     # Create a user
-    response = iam.create_user(UserName='new_user')
+    response = iam.create_user(UserName='new_user123')
 
     # Create a group
-    response = iam.create_group(GroupName='developers')
+    response = iam.create_group(GroupName='developers1')
 
     # Add user to group
     response = iam.add_user_to_group(
-        GroupName='developers',
-        UserName='new_user'
+        GroupName='developers1',
+        UserName='new_user123'
     )
 
 create_user()
